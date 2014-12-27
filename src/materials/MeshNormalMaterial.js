@@ -30,7 +30,7 @@ THREE.MeshNormalMaterial = function ( parameters ) {
 										//THREE.SmoothShading = 1; 平滑着色：用多种颜色进行绘制，每个顶点都是单独进行处理的，各顶点和各图元之间采用均匀插值。
 
 	this.wireframe = false;			//以线框方式渲染几何体.默认为false
-	this.wireframeLinewidth = 1;		//线框的宽度.
+	this.wireframeLinewidth = 1;		//线框的宽度,默认初始化为1.
 
 	this.morphTargets = false;	//定义材质是否设定目标变形动画,默认为false
 

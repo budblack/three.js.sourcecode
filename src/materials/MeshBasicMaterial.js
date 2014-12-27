@@ -379,6 +379,21 @@ THREE.MeshBasicMaterial = function ( parameters ) {
 
 	this.wireframe = false;				//以线框方式渲染几何体.默认为false
 	this.wireframeLinewidth = 1;		//线框的宽度.
+	/*******************************************linecap和linejoin属性详解****************************************
+	lineCap 属性指定线段如何结束。只有绘制较宽线段时，它才有效。这个属性的合法值如下表所示。默认值是："round"。
+		值				含义
+	"butt"		这个默认值指定了线段应该没有线帽。线条的末点是平直的而且和线条的方向正交，这条线段在其端点之外没有扩展。
+	"round"		这个值指定了线段应该带有一个半圆形的线帽，半圆的直径等于线段的宽度，并且线段在端点之外扩展了线段宽度的一半。
+	"square"	这个值表示线段应该带有一个矩形线帽。这个值和 "butt" 一样，但是线段扩展了自己的宽度的一半。
+
+	lineJoin 属性设置或返回所创建边角的类型，当两条线交汇时。
+	注释：值 "miter" 受 miterLimit 属性的影响。
+	默认值：	round
+	值		描述
+	bevel	创建斜角。
+	round	创建圆角。
+	miter	默认。创建尖角。
+	********************************************linecap和linejoin属性详解****************************************/
 	this.wireframeLinecap = 'round';	//线框的线段端点的样式,默认为round,和html的canvas里的属性一样也有"butt", "round", "square"
 	this.wireframeLinejoin = 'round';	//线框的线段边角的类型，当两条线交汇时,默认为round,和html的canvas里的属性一样也有"round", "bevel", "miter"
 										//TODO: 要给线框设置线型怎么办?

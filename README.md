@@ -147,11 +147,11 @@ src
 ¦      LineDashedMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦      Material.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦      MeshBasicMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦      MeshDepthMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦      MeshFaceMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
+¦      MeshDepthMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
+¦      MeshFaceMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦      MeshLambertMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦      MeshNormalMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
-¦      MeshPhongMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦      MeshPhongMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦      PointCloudMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
 ¦      RawShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦      ShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
