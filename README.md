@@ -149,14 +149,14 @@ src
 ¦      MeshBasicMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦      MeshDepthMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦      MeshFaceMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
-¦      MeshLambertMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦      MeshLambertMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦      MeshNormalMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦      MeshPhongMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦      PointCloudMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
-¦      RawShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦      ShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
-¦      SpriteCanvasMaterial.js - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
-¦      SpriteMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
+¦      PointCloudMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
+¦      RawShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
+¦      ShaderMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --100%
+¦      SpriteCanvasMaterial.js - - - - - - - - - - - - - - - - - - - - - - -  - -100%
+¦      SpriteMaterial.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦      
 --math
 ¦      Box2.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
