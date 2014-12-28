@@ -36,7 +36,7 @@ THREE.SpriteMaterial = function ( parameters ) {
 	this.rotation = 0;	//旋转角度,粒子系统的贴图的旋转角度吧.想想应该是.
 
 	this.fog = false;	//雾效,默认初始化为true.
-						//TODO: LineDashedMaterial为啥有雾效属性,而且为啥默认初始化为true?????????
+						//TODO:SpriteMaterial为啥有雾效属性,而且为啥默认初始化为true?????????
 
 	// set parameters 设置参数
 

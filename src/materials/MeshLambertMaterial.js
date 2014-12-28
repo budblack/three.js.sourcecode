@@ -389,7 +389,7 @@ THREE.MeshLambertMaterial = function ( parameters ) {
 	this.wireframeLinejoin = 'round';	//线框的线段边角的类型，当两条线交汇时,默认为round,和html的canvas里的属性一样也有"round", "bevel", "miter"
 										//TODO: 要给线框设置线型怎么办?
 
-	this.vertexColors = THREE.NoColors	//顶点颜色,默认初始化为THREE.NoColors.当然还可以有 THREE.VertexColors / THREE.FaceColors等选项,这里显示出了javascript的灵活性了.;
+	this.vertexColors = THREE.NoColors;	//顶点颜色,默认初始化为THREE.NoColors.当然还可以有 THREE.VertexColors / THREE.FaceColors等选项,这里显示出了javascript的灵活性了.;
 
 	this.skinning = false;		//定义材质是否使用蒙皮,默认初始化为false
 	this.morphTargets = false;	//定义材质是否设定目标变形动画,默认为false
