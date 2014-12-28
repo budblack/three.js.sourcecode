@@ -56,7 +56,7 @@
 ///<returns type="MeshPhongMaterial">返回MeshPhongMaterial,网格标准材质.</returns>
 THREE.MeshPhongMaterial = function ( parameters ) {
 
-	THREE.Material.call( this );
+	THREE.Material.call( this );	//调用Material对象的call方法,将原本属于Material的方法交给当前对象MeshPhongMaterial来使用.
 
 	this.color = new THREE.Color( 0xffffff ); // diffuse 漫射颜色,默认初始化为0xffffff,白色
 	this.ambient = new THREE.Color( 0xffffff );	//环境色 ,默认初始化为0xffffff, 白色, 乘以环境光对象的颜色
@@ -390,7 +390,6 @@ THREE.MeshPhongMaterial = function ( parameters ) {
 	该模式根本不是真正的溶解，因此并不是适合Dissolve这个称谓，其表现仅仅和Normal类似。其从上层中随机抽取一些像素作为透明，
 	使其可以看到下层，随着上层透明度越低，可看到的下层区域越多。如果上层完全不透明，则效果和Normal不会有任何不同。
 	******************************混合模式公式**************************************************************************************************/
-
 	this.combine = THREE.MultiplyOperation;	//混合模式
 	this.reflectivity = 1;	//反射率,默认为1
 	this.refractionRatio = 0.98;	//折射率,默认为0.98
@@ -439,7 +438,7 @@ THREE.MeshPhongMaterial = function ( parameters ) {
 
 
 	this.wireframe = false;			//以线框方式渲染几何体.默认为false
-	this.wireframeLinewidth = 1;		//线框的宽度.
+	this.wireframeLinewidth = 1;		//线框的宽度,默认初始化为1.
 
 	/*******************************************linecap和linejoin属性详解****************************************
 	lineCap 属性指定线段如何结束。只有绘制较宽线段时，它才有效。这个属性的合法值如下表所示。默认值是："round"。
@@ -460,7 +459,7 @@ THREE.MeshPhongMaterial = function ( parameters ) {
 	this.wireframeLinejoin = 'round';	//线框的线段边角的类型，当两条线交汇时,默认为round,和html的canvas里的属性一样也有"round", "bevel", "miter"
 										//TODO: 要给线框设置线型怎么办?
 
-	this.vertexColors = THREE.NoColors;
+	this.vertexColors = THREE.NoColors;	//顶点颜色,默认初始化为false.当然还可以有THREE.NoColors / THREE.VertexColors / THREE.FaceColors等选项,这里显示出了javascript的灵活性了.
 
 	this.skinning = false;		//定义材质是否使用蒙皮,默认初始化为false
 	this.morphTargets = false;	//定义材质是否设定目标变形动画,默认为false
