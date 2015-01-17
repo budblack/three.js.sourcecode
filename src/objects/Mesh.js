@@ -5,14 +5,31 @@
  * @author jonobr1 / http://jonobr1.com/
  */
 
+/*
+///Mesh对象,最终的网格对象,有高人把图形学建模比作是制作灯笼,先用Geometry创建灯笼的框架,然后将材质material贴在框架上,最后形成的总体灯笼,就是Mesh对象.下面看一下Mesh对象的用法和具体实现.
+/// 用法:var geometry = new THREE.Geometry(1,1,1);				//创建geometry对象(灯笼的框架),
+///																//有一下可选对象BoxGeometry,CircleGeometry,CubeGeometry,CylinderGeometry,DodecahedronGeometry,ExtrudeGeometry,IcosahedronGeometry,
+///																//LatheGeometry,OctahedronGeometry,ParametricGeometry,PlaneGeometry,PolyhedronGeometry,RingGeometry,ShapeGeometry,SphereGeometry,
+///																//TetrahedronGeometry,TextGeometry,TorusGeometry,TorusKnotGeometry,TubeGeometry
+///		 var material = new THREE.Material({color: 0xffff00});	//创建材质对象(灯笼的表面)
+///																//有以下可选对象LineBasicMaterial,LineDashedMaterial,Material,MeshBasicMaterial,MeshDepthMaterial,MeshFaceMaterial,
+///																//MeshLambertMaterial,MeshNormalMaterial,MeshPhongMaterial,PointCloudMaterial,RawShaderMaterial,ShaderMaterial,
+///																//SpriteCanvasMaterial,SpriteMaterial
+///		 var mesh = new THREE.Mesh(geometry, material);	//创建mesh(灯笼)对象,并将geometry对象(灯笼的框架)和material对象(灯笼的表面)传递给mesh(灯笼)对象
+///		 scene.add(mesh); 	//将mesh(灯笼)添加到场景中.
+*/
+///<summary>Mesh</summary>
+///<param name ="geometry" type="THREE.Geometry">Geometry对象(灯笼的框架)</param>
+///<param name ="material" type="THREE.Material">Material对象(材质对象)</param>
+///<returns type="Mesh">返回Mesh对象</returns>
 THREE.Mesh = function ( geometry, material ) {
 
-	THREE.Object3D.call( this );
+	THREE.Object3D.call( this );	//调用Object3D对象的call方法,将原本属于Object3D的方法交给当前对象Mesh来使用.
 
-	this.geometry = geometry !== undefined ? geometry : new THREE.Geometry();
-	this.material = material !== undefined ? material : new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } );
+	this.geometry = geometry !== undefined ? geometry : new THREE.Geometry();	//将参数geometry赋值给mesh对象的geometry属性
+	this.material = material !== undefined ? material : new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } );		//将参数material赋值给mesh对象的material属性
 
-	this.updateMorphTargets();
+	this.updateMorphTargets();	//更新变形目标
 
 };
 
