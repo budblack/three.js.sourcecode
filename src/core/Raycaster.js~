@@ -52,7 +52,7 @@
 	
 	THREE.Raycaster.prototype = {
 
-		constructor: THREE.Raycaster,	//构造器,返回对创建此对象Raycaster函数的引用
+		constructor: THREE.Raycaster,
 
 		precision: 0.0001,	//射线和Mesh对象相交的精度因子。
 		linePrecision: 1,	//射线和Line对象相交的精度因子。
