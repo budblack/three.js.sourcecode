@@ -780,6 +780,8 @@ THREE.Object3D.prototype = {
 	///NOTE: 在clone方法中如果参数force为true,将对其子对象应用同样的全局变换,默认为true.
 	*/
 	///<summary>clone</summary>
+	///<param name ="object" type="Object3D">接收克隆的Object3D对象</param>
+	///<param name ="recursive" type="boolean">是否对子对象一一进行克隆</param>
 	///<returns type="Object3D">返回克隆的Object3D对象</returns>	
 	clone: function ( object, recursive ) {
 

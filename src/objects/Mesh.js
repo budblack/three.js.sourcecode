@@ -192,14 +192,14 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 			var material = this.material;
 
-			if ( material === undefined ) return;
+			if ( material === undefined ) return;	//如果没有材质,返回
 
 			var attributes = geometry.attributes;
 
 			var a, b, c;
-			var precision = raycaster.precision;
+			var precision = raycaster.precision;	//精度因子
 
-			if ( attributes.index !== undefined ) {
+			if ( attributes.index !== undefined ) {		//如果bufferGeometry对象的attributes.index属性不为undefined
 
 				var indices = attributes.index.array;
 				var positions = attributes.position.array;
@@ -211,13 +211,13 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 				}
 
-				for ( var oi = 0, ol = offsets.length; oi < ol; ++oi ) {
+				for ( var oi = 0, ol = offsets.length; oi < ol; ++oi ) {	//根据定义bufferGeomentry存放的格式,遍历attributes属性.找到顶点数据存储区域
 
 					var start = offsets[ oi ].start;
 					var count = offsets[ oi ].count;
 					var index = offsets[ oi ].index;
 
-					for ( var i = start, il = start + count; i < il; i += 3 ) {
+					for ( var i = start, il = start + count; i < il; i += 3 ) {	//根据定义bufferGeomentry存放的格式,遍历attributes属性.找到顶点数据
 
 						a = index + indices[ i ];
 						b = index + indices[ i + 1 ];
@@ -240,32 +240,32 @@ THREE.Mesh.prototype.raycast = ( function () {
 						);
 
 
-						if ( material.side === THREE.BackSide ) {
+						if ( material.side === THREE.BackSide ) {	//如果材质的side属性为BackSide
 
-							var intersectionPoint = ray.intersectTriangle( vC, vB, vA, true );
+							var intersectionPoint = ray.intersectTriangle( vC, vB, vA, true );	//调用intersectTriangle方法判断是否与参数VC,VB,VA组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数true,表示判断背面
 
 						} else {
 
-							var intersectionPoint = ray.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );
+							var intersectionPoint = ray.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );		//调用intersectTriangle方法判断是否与参数VA,VB,VC组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数,表示判断正面
 
 						}
 
-						if ( intersectionPoint === null ) continue;
+						if ( intersectionPoint === null ) continue;		//如果没有交点,跳出循环
 
-						intersectionPoint.applyMatrix4( this.matrixWorld );
+						intersectionPoint.applyMatrix4( this.matrixWorld );		//将非null的交点应用世界坐标变换
 
-						var distance = raycaster.ray.origin.distanceTo( intersectionPoint );
+						var distance = raycaster.ray.origin.distanceTo( intersectionPoint );	//计算射线原点到交点的距离
 
-						if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;
+						if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;	//如果距离小于精度因子,或小于射线的近端,或大于射线的远端,跳出循环
 
-						intersects.push( {
+						intersects.push( {		//将相交的对象,顶点索引,距离,交点保存到intersects属性数组中
 
-							distance: distance,
-							point: intersectionPoint,
-							indices: [ a, b, c ],
-							face: null,
-							faceIndex: null,
-							object: this
+							distance: distance,		//距离
+							point: intersectionPoint,	//交点
+							indices: [ a, b, c ],	//顶点在attribute属性中的索引
+							face: null,				//面
+							faceIndex: null,		//面所在属性数组中的索引
+							object: this 			//对象
 
 						} );
 
@@ -273,11 +273,11 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 				}
 
-			} else {
+			} else {		//如果bufferGeometry对象的attributes.index属性为undefined
 
 				var positions = attributes.position.array;
 
-				for ( var i = 0, j = 0, il = positions.length; i < il; i += 3, j += 9 ) {
+				for ( var i = 0, j = 0, il = positions.length; i < il; i += 3, j += 9 ) {	//找到所有的顶点位置属性
 
 					a = i;
 					b = i + 1;
@@ -300,32 +300,32 @@ THREE.Mesh.prototype.raycast = ( function () {
 					);
 
 
-					if ( material.side === THREE.BackSide ) {
+					if ( material.side === THREE.BackSide ) {	//如果材质的side属性为BackSide
 
-						var intersectionPoint = ray.intersectTriangle( vC, vB, vA, true );
+						var intersectionPoint = ray.intersectTriangle( vC, vB, vA, true );	//调用intersectTriangle方法判断是否与参数VC,VB,VA组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数true,表示判断背面
 
 					} else {
 
-						var intersectionPoint = ray.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );
+						var intersectionPoint = ray.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );		//调用intersectTriangle方法判断是否与参数VA,VB,VC组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数,表示判断正面
 
 					}
 
-					if ( intersectionPoint === null ) continue;
+					if ( intersectionPoint === null ) continue;		//如果没有交点,跳出循环
 
-					intersectionPoint.applyMatrix4( this.matrixWorld );
+					intersectionPoint.applyMatrix4( this.matrixWorld );	//将非null的交点应用世界坐标变换
 
-					var distance = raycaster.ray.origin.distanceTo( intersectionPoint );
+					var distance = raycaster.ray.origin.distanceTo( intersectionPoint );	//计算射线原点到交点的距离
 
-					if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;
+					if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;	//如果距离小于精度因子,或小于射线的近端,或大于射线的远端,跳出循环
 
-					intersects.push( {
+					intersects.push( {	//将相交的对象,顶点索引,距离,交点保存到intersects属性数组中
 
-						distance: distance,
-						point: intersectionPoint,
-						indices: [ a, b, c ],
-						face: null,
-						faceIndex: null,
-						object: this
+						distance: distance,	//距离
+						point: intersectionPoint,	//交点
+						indices: [ a, b, c ],	//顶点在attribute属性中的索引
+						face: null,			//面
+						faceIndex: null,		//面所在属性数组中的索引
+						object: this 			//对象
 
 					} );
 
@@ -333,29 +333,29 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 			}
 
-		} else if ( geometry instanceof THREE.Geometry ) {
+		} else if ( geometry instanceof THREE.Geometry ) {	//如果geometry对象是THREE.Geometry类型
 
 			var isFaceMaterial = this.material instanceof THREE.MeshFaceMaterial;
 			var objectMaterials = isFaceMaterial === true ? this.material.materials : null;
 
 			var a, b, c, d;
-			var precision = raycaster.precision;
+			var precision = raycaster.precision;	//精度因子
 
-			var vertices = geometry.vertices;
+			var vertices = geometry.vertices;		
 
-			for ( var f = 0, fl = geometry.faces.length; f < fl; f ++ ) {
+			for ( var f = 0, fl = geometry.faces.length; f < fl; f ++ ) {	//遍历geometry对象的所有面
 
 				var face = geometry.faces[ f ];
 
 				var material = isFaceMaterial === true ? objectMaterials[ face.materialIndex ] : this.material;
 
-				if ( material === undefined ) continue;
+				if ( material === undefined ) continue;	//如果没有材质,跳出循环
 
 				a = vertices[ face.a ];
 				b = vertices[ face.b ];
 				c = vertices[ face.c ];
 
-				if ( material.morphTargets === true ) {
+				if ( material.morphTargets === true ) {		//如果有变性目标属性
 
 					var morphTargets = geometry.morphTargets;
 					var morphInfluences = this.morphTargetInfluences;
@@ -364,7 +364,7 @@ THREE.Mesh.prototype.raycast = ( function () {
 					vB.set( 0, 0, 0 );
 					vC.set( 0, 0, 0 );
 
-					for ( var t = 0, tl = morphTargets.length; t < tl; t ++ ) {
+					for ( var t = 0, tl = morphTargets.length; t < tl; t ++ ) {		//将所有的顶点按照变形数据做变换
 
 						var influence = morphInfluences[ t ];
 
@@ -396,31 +396,31 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 				}
 
-				if ( material.side === THREE.BackSide ) {
+				if ( material.side === THREE.BackSide ) {	//如果材质的side属性为BackSide
 
-					var intersectionPoint = ray.intersectTriangle( c, b, a, true );
+					var intersectionPoint = ray.intersectTriangle( c, b, a, true );	//调用intersectTriangle方法判断是否与参数VC,VB,VA组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数true,表示判断背面
 
 				} else {
 
-					var intersectionPoint = ray.intersectTriangle( a, b, c, material.side !== THREE.DoubleSide );
+					var intersectionPoint = ray.intersectTriangle( a, b, c, material.side !== THREE.DoubleSide );		//调用intersectTriangle方法判断是否与参数VA,VB,VC组成的Triangle三角形对象相交,如果相交返回交点.如果不想交返回null,这里最后一个参数,表示判断正面
 
 				}
 
-				if ( intersectionPoint === null ) continue;
+				if ( intersectionPoint === null ) continue;		//如果没有交点,跳出循环
 
-				intersectionPoint.applyMatrix4( this.matrixWorld );
+				intersectionPoint.applyMatrix4( this.matrixWorld );	//将非null的交点应用世界坐标变换
 
-				var distance = raycaster.ray.origin.distanceTo( intersectionPoint );
+				var distance = raycaster.ray.origin.distanceTo( intersectionPoint );	//计算射线原点到交点的距离
 
-				if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;
+				if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;	//如果距离小于精度因子,或小于射线的近端,或大于射线的远端,跳出循环
 
 				intersects.push( {
 
-					distance: distance,
-					point: intersectionPoint,
-					face: face,
-					faceIndex: f,
-					object: this
+					distance: distance,	//距离
+					point: intersectionPoint,	//交点
+					face: face,	//面
+					faceIndex: f,	//面索引
+					object: this 	//对象
 
 				} );
 
@@ -432,12 +432,19 @@ THREE.Mesh.prototype.raycast = ( function () {
 
 }() );
 
+/*clone方法
+///clone方法克隆一个Mesh网格对象.
+*/
+///<summary>clone</summary>
+///<param name ="object" type="Object3D">接收克隆的Object3D对象</param>
+///<param name ="recursive" type="boolean">是否对子对象一一进行克隆</param>
+///<returns type="Ray">返回Mesh网格对象.</returns>	
 THREE.Mesh.prototype.clone = function ( object, recursive ) {
 
 	if ( object === undefined ) object = new THREE.Mesh( this.geometry, this.material );
 
-	THREE.Object3D.prototype.clone.call( this, object, recursive );
+	THREE.Object3D.prototype.clone.call( this, object, recursive );	//继承Object3D的clone方法
 
-	return object;
+	return object;		//返回Mesh网格对象.
 
 };
