@@ -27,7 +27,7 @@ THREE.Mesh = function ( geometry, material ) {
 	THREE.Object3D.call( this );	//调用Object3D对象的call方法,将原本属于Object3D的方法交给当前对象Mesh来使用.
 
 	this.geometry = geometry !== undefined ? geometry : new THREE.Geometry();	//将参数geometry赋值给mesh对象的geometry属性
-	this.material = material !== undefined ? material : new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } );		//将参数material赋值给mesh对象的material属性
+	this.material = material !== undefined ? material : new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } );		//将参数material赋值给mesh对象的material属性,如果没有传递material参数,将创建随机颜色材质,赋值给当前mesh对象
 
 /*
 ///MorphTargets
@@ -142,8 +142,8 @@ THREE.Mesh.prototype.getMorphTargetIndexByName = function ( name ) {
 ///
 *////<summary>raycast</summary>
 ///<param name ="raycaster" type="THREE.Raycaster">射线对象</param>
-///<param name ="intersects" type="ObjectArray">交点的集合</param>
-///<returns type="ObjectArray">交点的集合</returns>
+///<param name ="intersects" type="ObjectArray">交点的属性集合</param>
+///<returns type="ObjectArray">交点的属性集合</returns>
 THREE.Mesh.prototype.raycast = ( function () {
 
 	var inverseMatrix = new THREE.Matrix4();	//声明一个4x4矩阵，用来放置逆矩阵
