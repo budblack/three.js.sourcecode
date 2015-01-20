@@ -15,11 +15,11 @@
 ///<summary>Skeleton</summary>
 ///<param name ="bones" type="SkinnedMesh">骨骼数组</param>
 ///<param name ="boneInverses" type="SkinnedMesh">骨架位置逆矩阵</param>
-///<param name ="useVertexTexture" type="boolean">true 或者 false,是否使用顶点纹理</param>
+///<param name ="useVertexTexture" type="boolean">true 或者 false,是否使用顶点纹理,对象构建后,该属性不能修改.</param>
 ///<returns type="Skeleton">骨骼对象</returns>
 THREE.Skeleton = function ( bones, boneInverses, useVertexTexture ) {
 
-	this.useVertexTexture = useVertexTexture !== undefined ? useVertexTexture : true;
+	this.useVertexTexture = useVertexTexture !== undefined ? useVertexTexture : true;	//如果不设置useVertexTexture参数,默认初始化为true
 
 	this.identityMatrix = new THREE.Matrix4();
 
@@ -180,6 +180,11 @@ THREE.Skeleton.prototype.pose = function () {
 
 };
 
+/*update方法
+///update方法更新当前骨架的缓冲区数据,并更新纹理标识设置为true.
+*/
+///<summary>pose</summary>
+///<returns type="Skeleton">返回包含新的骨架对象.</returns>	
 THREE.Skeleton.prototype.update = function () {
 
 	var offsetMatrix = new THREE.Matrix4();
