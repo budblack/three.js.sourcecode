@@ -16,7 +16,7 @@
 ///<param name ="geometry" type="THREE.Geometry">Geometry对象(灯笼的框架)</param>
 ///<param name ="material" type="THREE.Material">Material对象(材质对象)</param>
 ///<param name ="type" type="线类型常量">线类型常量,有不闭合折线(THREE.LineStrip),多组双顶点线段(THREE.LinePieces)</param>
-///<returns type="Mesh">返回Line对象</returns>
+///<returns type="Line">返回Line对象</returns>
 THREE.Line = function ( geometry, material, type ) {
 
 	THREE.Object3D.call( this );	//调用Object3D对象的call方法,将原本属于Object3D的方法交给当前对象Line来使用.
@@ -127,17 +127,17 @@ THREE.Line.prototype.raycast = ( function () {
 }() );
 
 /*clone方法
-///clone方法克隆一个Line网格对象.
+///clone方法克隆一个Line线对象.
 */
 ///<summary>clone</summary>
 ///<param name ="object" type="Object3D">接收克隆的Object3D对象</param>
-///<returns type="Ray">返回Line网格对象.</returns>	
+///<returns type="Line">返回Line线对象.</returns>	
 THREE.Line.prototype.clone = function ( object ) {
 
 	if ( object === undefined ) object = new THREE.Line( this.geometry, this.material, this.type );
 
 	THREE.Object3D.prototype.clone.call( this, object );	//继承Object3D的clone方法
 
-	return object;		//返回Mesh网格对象.
+	return object;		//返回Line线对象.
 
 };

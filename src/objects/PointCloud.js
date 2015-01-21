@@ -158,7 +158,7 @@ THREE.PointCloud.prototype.clone = function ( object ) {
 
 };
 
-// Backwards compatibility
+// Backwards compatibility 向后兼容,粒子系统呗点云对象替代.
 
 THREE.ParticleSystem = function ( geometry, material ) {
 
