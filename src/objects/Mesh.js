@@ -438,7 +438,7 @@ THREE.Mesh.prototype.raycast = ( function () {
 ///<summary>clone</summary>
 ///<param name ="object" type="Object3D">接收克隆的Object3D对象</param>
 ///<param name ="recursive" type="boolean">是否对子对象一一进行克隆</param>
-///<returns type="Ray">返回Mesh网格对象.</returns>	
+///<returns type="Mesh">返回Mesh网格对象.</returns>	
 THREE.Mesh.prototype.clone = function ( object, recursive ) {
 
 	if ( object === undefined ) object = new THREE.Mesh( this.geometry, this.material );
