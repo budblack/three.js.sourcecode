@@ -293,18 +293,23 @@ THREE.Curve.prototype.getUtoTmapping = function ( u, distance ) {
 
 };
 
+/*
+///getTangent方法将返回一个点t在曲线上位置向量的法线向量.
+*/
+///<summary>getTangent</summary>
+///<param name ="t" type="float">t的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="Vector3">返回一个点t在曲线上位置向量的单位向量</returns>
+
 // Returns a unit vector tangent at t
 // 返回一个点t在曲线上位置向量的单位向量
 // In case any sub curve does not implement its tangent derivation,
-// 
 // 2 points a small delta apart will be used to find its gradient
 // which seems to give a reasonable approximation
-
 THREE.Curve.prototype.getTangent = function( t ) {
-
-	var delta = 0.0001;
-	var t1 = t - delta;
-	var t2 = t + delta;
+	//这里为了给向量设定一个方向.
+	var delta = 0.0001;	//设置一个delta值
+	var t1 = t - delta;	//t点减delta值,
+	var t2 = t + delta;	//t点加delta值.
 
 	// Capping in case of danger
 
@@ -315,15 +320,21 @@ THREE.Curve.prototype.getTangent = function( t ) {
 	var pt2 = this.getPoint( t2 );
 
 	var vec = pt2.clone().sub(pt1);
-	return vec.normalize();	//返回一个点t在曲线上位置向量的单位向量
+	return vec.normalize();	//返回一个点t在曲线上位置向量的法线向量.
 
 };
 
 
+/*
+///getTangent方法将返回一个点t在曲线上位置向量的法线向量.
+*/
+///<summary>getTangentAt</summary>
+///<param name ="u" type="float">t的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="Vector3">返回一个点t在曲线上位置向量的单位向量</returns>
 THREE.Curve.prototype.getTangentAt = function ( u ) {
 
-	var t = this.getUtoTmapping( u );
-	return this.getTangent( t );
+	var t = this.getUtoTmapping( u );	//getUtoTmapping方法将当前样条曲线作为一个整体,返回点u在曲线上的相对位置或者对应distance对应的位置(0.0-1.0).
+	return this.getTangent( t );	//getTangent方法将返回一个点t在曲线上位置向量的法线向量
 
 };
 
@@ -334,26 +345,55 @@ THREE.Curve.prototype.getTangentAt = function ( u ) {
 /**************************************************************
  *	Utils
  **************************************************************/
-
+// 关于bezier曲线,b样条,nurbs曲线的一些差别.
+//§  Bezier曲线中的每个控制点都会影响整个曲线的形状，而B样条中的控制点只会影响整个曲线的一部分，显然B样条提供了更多的灵活性；
+//§  Bezier和B样条都是多项式参数曲线，不能表示一些基本的曲线，比如圆，所以引入了NURBS，即非均匀有理B样条来解决这个问题；
+// 关于二次样条,3次样条曲线的一些简单的差别,二次样条有3个控制点控制一段曲线,三次样条曲线由4个控制点控制一段曲线.更细分的区别百度吧.
 THREE.Curve.Utils = {
-
+	/*
+	///tangentQuadraticBezier方法将返回二次Bezier曲线上点t的切线
+	*/
+	///<summary>tangentQuadraticBezier</summary>
+	///<param name ="t" type="Vector3">三维向量</param>
+	///<param name ="p0" type="Vector3">三维向量</param>
+	///<param name ="p1" type="Vector3">三维向量</param>
+	///<param name ="p2" type="Vector3">三维向量</param>
+	///<returns type="number">二次Bezier曲线上点t的切线</returns>
 	tangentQuadraticBezier: function ( t, p0, p1, p2 ) {
 
-		return 2 * ( 1 - t ) * ( p1 - p0 ) + 2 * t * ( p2 - p1 );
+		return 2 * ( 1 - t ) * ( p1 - p0 ) + 2 * t * ( p2 - p1 );		//二次Bezier曲线上点t的切线
 
 	},
 
 	// Puay Bing, thanks for helping with this derivative!
-
+	/*
+	///tangentCubicBezier方法将返回三次Bezier曲线上点t的切线
+	*/
+	///<summary>tangentQuadraticBezier</summary>
+	///<param name ="t" type="Vector3">三维向量</param>
+	///<param name ="p0" type="Vector3">三维向量</param>
+	///<param name ="p1" type="Vector3">三维向量</param>
+	///<param name ="p2" type="Vector3">三维向量</param>
+	///<param name ="p3" type="Vector3">三维向量</param>
+	///<returns type="number">三次Bezier曲线上点t的切线</returns>
 	tangentCubicBezier: function (t, p0, p1, p2, p3 ) {
 
 		return - 3 * p0 * (1 - t) * (1 - t)  +
 			3 * p1 * (1 - t) * (1-t) - 6 *t *p1 * (1-t) +
 			6 * t *  p2 * (1-t) - 3 * t * t * p2 +
-			3 * t * t * p3;
+			3 * t * t * p3;		//三次Bezier曲线上点t的切线
 	},
 
-
+	/*
+	///tangentSpline方法将返回Spline曲线上点t的切线
+	*/
+	///<summary>tangentSpline</summary>
+	///<param name ="t" type="Vector3">三维向量</param>
+	///<param name ="p0" type="Vector3">三维向量</param>
+	///<param name ="p1" type="Vector3">三维向量</param>
+	///<param name ="p2" type="Vector3">三维向量</param>
+	///<param name ="p3" type="Vector3">三维向量</param>
+	///<returns type="number">返回Spline曲线上点t的切线</returns>
 	tangentSpline: function ( t, p0, p1, p2, p3 ) {
 
 		// To check if my formulas are correct
@@ -363,19 +403,29 @@ THREE.Curve.Utils = {
 		var h01 = - 6 * t * t + 6 * t; 	// − 2t3 + 3t2
 		var h11 = 3 * t * t - 2 * t;	// t3 − t2
 
-		return h00 + h10 + h01 + h11;
+		return h00 + h10 + h01 + h11;	//三次Bezier曲线上点t的切线
 
 	},
 
 	// Catmull-Rom
 
+	/*
+	///tangentSpline方法将点t在三次Bezier曲线上插值.
+	*/
+	///<summary>tangentSpline</summary>
+	///<param name ="t" type="Vector3">三维向量</param>
+	///<param name ="p0" type="Vector3">三维向量</param>
+	///<param name ="p1" type="Vector3">三维向量</param>
+	///<param name ="p2" type="Vector3">三维向量</param>
+	///<param name ="p3" type="Vector3">三维向量</param>
+	///<returns type="number">返回点t插值后的三次Bezier曲线</returns>
 	interpolate: function( p0, p1, p2, p3, t ) {
 
 		var v0 = ( p2 - p0 ) * 0.5;
 		var v1 = ( p3 - p1 ) * 0.5;
 		var t2 = t * t;
 		var t3 = t * t2;
-		return ( 2 * p1 - 2 * p2 + v0 + v1 ) * t3 + ( - 3 * p1 + 3 * p2 - 2 * v0 - v1 ) * t2 + v0 * t + p1;
+		return ( 2 * p1 - 2 * p2 + v0 + v1 ) * t3 + ( - 3 * p1 + 3 * p2 - 2 * v0 - v1 ) * t2 + v0 * t + p1;	//返回点t插值后的三次Bezier曲线
 
 	}
 
@@ -389,12 +439,19 @@ THREE.Curve.Utils = {
  **************************************************************/
 
 // A Factory method for creating new curve subclasses
+// 一个构造方法用来创建新曲线子类.
 
+/*
+///create方法一个构造方法用来创建新曲线子类
+*/
+///<summary>create</summary>
+///<param name ="constructor" type="Object.prototype">.</param>
+///<returns type="Vector3">返回一个点t在曲线上位置向量的单位向量</returns>
 THREE.Curve.create = function ( constructor, getPointFunc ) {
 
-	constructor.prototype = Object.create( THREE.Curve.prototype );
-	constructor.prototype.getPoint = getPointFunc;
+	constructor.prototype = Object.create( THREE.Curve.prototype );	//构造新区线类.
+	constructor.prototype.getPoint = getPointFunc;	//getPoint方法的具体实现
 
-	return constructor;
+	return constructor;		//返回构造对象.
 
 };
