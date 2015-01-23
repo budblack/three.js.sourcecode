@@ -118,7 +118,6 @@ THREE.Spline = function ( points ) {
 	///<returns type="Spline">返回被参数nSubDivisions(将当前样条曲线等分成多少段)等分当前样条曲线的长度数组和总长度组成的对象</returns>
 	// approximate length by summing linear segments
 	//汇总线性线段获得近似长度
-
 	this.getLength = function ( nSubDivisions ) {
 
 		var i, index, nSamples, position,

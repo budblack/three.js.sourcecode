@@ -2,7 +2,7 @@
  * @author zz85 / http://www.lab4games.net/zz85/blog
  * Extensible curve object
  *
- * Some common of Curve methods
+ * Some common of Curve methods 一些通用的方法.
  * .getPoint(t), getTangent(t)
  * .getPointAt(u), getTagentAt(u)
  * .getPoints(), .getSpacedPoints()
@@ -10,6 +10,7 @@
  * .updateArcLengths()
  *
  * This following classes subclasses THREE.Curve:
+ * 这些是THREE.Curve的一些子类.
  *
  * -- 2d classes --
  * THREE.LineCurve
@@ -27,20 +28,46 @@
  * THREE.ClosedSplineCurve3
  *
  * A series of curves can be represented as a THREE.CurvePath
+ * 一个曲线序列可以用THREE.CurvePath
  *
  **/
 
 /**************************************************************
- *	Abstract Curve base class
+ *	Abstract Curve base class 曲线抽象基类
  **************************************************************/
-
+/*
+///Curve对象曲线抽象基类,一个可扩展的曲线对象包含插值方法.
+///
+///	定义:样条曲线是经过一系列给定点的光滑曲线。最初，样条曲线都是借助于物理样条得到的，放样员把富有弹性的细木条（或有机玻璃条），
+///		 用压铁固定在曲线应该通过的给定型值点处，样条做自然弯曲所绘制出来的曲线就是样条曲线。样条曲线不仅通过各有序型值点，
+///		 并且在各型值点处的一阶和二阶导数连续，也即该曲线具有连续的、曲率变化均匀的特点。
+///	NOTE:参考百度百科http://baike.baidu.com/view/1896463.htm?fr=aladdin
+/// NOTE:关于三次样条插值,参考百度百科http://baike.baidu.com/view/2326225.htm?fr=aladdin
+/// NOTE:关于更多样条曲线插值,参考维基百科http://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A
+/// NOTE:关于样条曲线,参考维基百科http://zh.wikipedia.org/wiki/%E6%A0%B7%E6%9D%A1%E5%87%BD%E6%95%B0
+///
+///
+*/
+///<summary>Curve</summary>
 THREE.Curve = function () {
 
 };
 
-// Virtual base class method to overwrite and implement in subclasses
-//	- t [0 .. 1]
+/****************************************
+****下面是Curve对象提供的功能函数.
+****************************************/
 
+/*
+///getPoint方法返回在curve对象上t点(取值范围0.0-1.0之间)的矢量.
+*/
+///<summary>getPoint</summary>
+///<param name ="t" type="float">t的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="null">返回t点的具体坐标.</returns>
+
+// Virtual base class method to overwrite and implement in subclasses
+// 虚基类方法,需要在子类中重写具体实现.
+//	- t [0 .. 1]
+// t的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.
 THREE.Curve.prototype.getPoint = function ( t ) {
 
 	console.log( "Warning, getPoint() not implemented!" );
@@ -48,53 +75,75 @@ THREE.Curve.prototype.getPoint = function ( t ) {
 
 };
 
-// Get point at relative position in curve according to arc length
-// - u [0 .. 1]
+/*
+///getPointAt方法获得一个点u在曲线上的相对位置,用弧长表示.
+*/
+///<summary>getPointAt</summary>
+///<param name ="t" type="float">u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="float">返回点u在曲线上的相对位置,用弧长表示.</returns>
 
+// Get point at relative position in curve according to arc length
+//获得一个点u在曲线上的相对位置,用弧长表示.
+// - u [0 .. 1]
+// u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.
 THREE.Curve.prototype.getPointAt = function ( u ) {
 
-	var t = this.getUtoTmapping( u );
-	return this.getPoint( t );
+	var t = this.getUtoTmapping( u );	//调用getUtoTmapping,将当前样条曲线作为一个整体,返回点u在曲线上的相对位置或者对应distance对应的位置(0.0-1.0).
+	return this.getPoint( t );	//返回点u在曲线上的相对位置,用弧长表示.
 
 };
 
-// Get sequence of points using getPoint( t )
+/*
+///getPoints方法根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.返回对应等分线段顶点的坐标数组.
+*/
+///<summary>getPoints</summary>
+///<param name ="divisions" type="int">根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.</param>
+///<returns type="Vector3Array">返回对应等分线段顶点的坐标数组.</returns>
 
+// Get sequence of points using getPoint( t )
+// 根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.
 THREE.Curve.prototype.getPoints = function ( divisions ) {
 
 	if ( ! divisions ) divisions = 5;
 
 	var d, pts = [];
 
-	for ( d = 0; d <= divisions; d ++ ) {
+	for ( d = 0; d <= divisions; d ++ ) {	//遍历等分数量
 
-		pts.push( this.getPoint( d / divisions ) );
+		pts.push( this.getPoint( d / divisions ) );	//调用getPoint方法,返回对应等分线段端点的坐标.
 
 	}
 
-	return pts;
+	return pts;		//返回对应等分线段顶点的坐标数组.
 
 };
 
+/*
+///getSpacedPoints方法根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.
+*/
+///<summary>getPointAt</summary>
+///<param name ="t" type="float">u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="float">返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.</returns>
 // Get sequence of points using getPointAt( u )
-
+// 获得一系列顶点的相对位置的数组.调用getPointAt方法.
 THREE.Curve.prototype.getSpacedPoints = function ( divisions ) {
 
 	if ( ! divisions ) divisions = 5;
 
 	var d, pts = [];
 
-	for ( d = 0; d <= divisions; d ++ ) {
+	for ( d = 0; d <= divisions; d ++ ) {		//遍历等分数量
 
-		pts.push( this.getPointAt( d / divisions ) );
+		pts.push( this.getPointAt( d / divisions ) );	//调用getPointAt方法,返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.
 
 	}
 
-	return pts;
+	return pts;		//返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.
 
 };
 
 // Get total curve arc length
+//获得曲线总的弧长
 
 THREE.Curve.prototype.getLength = function () {
 
@@ -104,6 +153,7 @@ THREE.Curve.prototype.getLength = function () {
 };
 
 // Get list of cumulative segment lengths
+// 获得个线段的长度的列表
 
 THREE.Curve.prototype.getLengths = function ( divisions ) {
 
@@ -147,35 +197,45 @@ THREE.Curve.prototype.updateArcLengths = function() {
 	this.getLengths();
 };
 
-// Given u ( 0 .. 1 ), get a t to find p. This gives you points which are equi distance
+/*
+///getUtoTmapping方法将当前样条曲线作为一个整体,返回点u在曲线上的相对位置或者对应distance对应的位置(0.0-1.0).
+*/
+///<summary>getUtoTmapping</summary>
+///<param name ="u" type="float">u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<param name ="distance" type="float">如果设置长度值,则返回对应长度在整条线段的位置</param>
+///<returns type="float">点u在曲线上的相对位置或者对应distance对应的位置(0.0-1.0)</returns>
 
+// Given u ( 0 .. 1 ), get a t to find p. This gives you points which are equi distance
+// 获得在curve对象上u点(取值范围0.0-1.0之间)距离等于distance的点t.
 THREE.Curve.prototype.getUtoTmapping = function ( u, distance ) {
 
-	var arcLengths = this.getLengths();
+	var arcLengths = this.getLengths();	//获得这个线段的长度列表
 
 	var i = 0, il = arcLengths.length;
 
-	var targetArcLength; // The targeted u distance value to get
+	var targetArcLength; // The targeted u distance value to get 获得目标点u的长度值
 
-	if ( distance ) {
+	if ( distance ) {	//如果设置了长度
 
-		targetArcLength = distance;
+		targetArcLength = distance;		
 
 	} else {
 
-		targetArcLength = u * arcLengths[ il - 1 ];
+		targetArcLength = u * arcLengths[ il - 1 ];	//获得u点在整条线段(是由多个曲线对象组成的线段)中的位置.
 
 	}
 
 	//var time = Date.now();
 
 	// binary search for the index with largest value smaller than target u distance
+	// 遍历线段的索引,u值在曲线线段上的第几段,就是u值所在位置的线段在arcLengths的索引.
 
 	var low = 0, high = il - 1, comparison;
 
 	while ( low <= high ) {
 
 		i = Math.floor( low + ( high - low ) / 2 ); // less likely to overflow, though probably not issue here, JS doesn't really have integers, all numbers are floats
+													// 很少有可能溢出,为了保险,将浮点数转成整数
 
 		comparison = arcLengths[ i ] - targetArcLength;
 
@@ -207,11 +267,12 @@ THREE.Curve.prototype.getUtoTmapping = function ( u, distance ) {
 	if ( arcLengths[ i ] == targetArcLength ) {
 
 		var t = i / ( il - 1 );
-		return t;
+		return t;	//返回位置
 
 	}
 
 	// we could get finer grain at lengths, or use simple interpolatation between two points
+	// 获得更精确的长度,在两个索引值之间的位置.
 
 	var lengthBefore = arcLengths[ i ];
     var lengthAfter = arcLengths[ i + 1 ];
@@ -219,19 +280,23 @@ THREE.Curve.prototype.getUtoTmapping = function ( u, distance ) {
     var segmentLength = lengthAfter - lengthBefore;
 
     // determine where we are between the 'before' and 'after' points
+    // 确定点在“before”和“after"的确切位置.
 
     var segmentFraction = ( targetArcLength - lengthBefore ) / segmentLength;
 
     // add that fractional amount to t
+    // 获得t在整个线段中的位置
 
     var t = ( i + segmentFraction ) / ( il -1 );
 
-	return t;
+	return t;	//返回位置.
 
 };
 
 // Returns a unit vector tangent at t
+// 返回一个点t在曲线上位置向量的单位向量
 // In case any sub curve does not implement its tangent derivation,
+// 
 // 2 points a small delta apart will be used to find its gradient
 // which seems to give a reasonable approximation
 
@@ -250,7 +315,7 @@ THREE.Curve.prototype.getTangent = function( t ) {
 	var pt2 = this.getPoint( t2 );
 
 	var vec = pt2.clone().sub(pt1);
-	return vec.normalize();
+	return vec.normalize();	//返回一个点t在曲线上位置向量的单位向量
 
 };
 
