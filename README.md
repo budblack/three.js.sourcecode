@@ -67,7 +67,7 @@ src
 ¦  ¦      SplineCurve3.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      
 ¦  --geometries
-¦  ¦      BoxGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
+¦  ¦      BoxGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      CircleGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      CubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      CylinderGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
