@@ -4,7 +4,6 @@
  */
 /*
 ///BoxGeometry用来在三维空间内创建一个立方体盒子对象.
-/// NOTE:如果没有参数min,max将立方体边界初始化为Infinity,无穷大
 ///
 ///	用法: var geometry = new THREE.BoxGeometry(1,1,1);	
 /// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
