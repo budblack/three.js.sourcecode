@@ -68,8 +68,8 @@ src
 ¦  ¦      
 ¦  --geometries
 ¦  ¦      BoxGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --100%
-¦  ¦      CircleGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦  ¦      CubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      CircleGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
+¦  ¦      CubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      CylinderGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      ExtrudeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
 ¦  ¦      IcosahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --  0%

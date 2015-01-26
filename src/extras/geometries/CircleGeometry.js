@@ -31,39 +31,41 @@ THREE.CircleGeometry = function ( radius, segments, thetaStart, thetaLength ) {
 
 	thetaStart = thetaStart !== undefined ? thetaStart : 0;	//圆形或者多边形的起始点,默认初始化为0.
 	thetaLength = thetaLength !== undefined ? thetaLength : Math.PI * 2;	//圆(多边形)的结束点,默认初始化为Math.PI * 2
-
+	// 下面这段代码为圆形(多边形)生成uv坐标,点点信息.
 	var i, uvs = [],
 	center = new THREE.Vector3(), centerUV = new THREE.Vector2( 0.5, 0.5 );
 
 	this.vertices.push(center);
 	uvs.push( centerUV );
 
-	for ( i = 0; i <= segments; i ++ ) {
+	for ( i = 0; i <= segments; i ++ ) { //遍历组成圆形(多边形)的线段数或边数
 
 		var vertex = new THREE.Vector3();
-		var segment = thetaStart + i / segments * thetaLength;
+		var segment = thetaStart + i / segments * thetaLength;	//获得组成圆形(多边形)边或线段的角度
 
-		vertex.x = radius * Math.cos( segment );
-		vertex.y = radius * Math.sin( segment );
+		vertex.x = radius * Math.cos( segment );	//根据半径和角度值计算出x坐标
+		vertex.y = radius * Math.sin( segment );	//根据半径和角度值计算出y坐标
 
-		this.vertices.push( vertex );
-		uvs.push( new THREE.Vector2( ( vertex.x / radius + 1 ) / 2, ( vertex.y / radius + 1 ) / 2 ) );
+		this.vertices.push( vertex );	//添加到顶点数组.
+		uvs.push( new THREE.Vector2( ( vertex.x / radius + 1 ) / 2, ( vertex.y / radius + 1 ) / 2 ) );	//添加uvs坐标信息
 
 	}
 
 	var n = new THREE.Vector3( 0, 0, 1 );
 
-	for ( i = 1; i <= segments; i ++ ) {
+	for ( i = 1; i <= segments; i ++ ) {	//遍历组成圆形(多边形)的线段数或边数
 
-		this.faces.push( new THREE.Face3( i, i + 1, 0, [ n.clone(), n.clone(), n.clone() ] ) );
-		this.faceVertexUvs[ 0 ].push( [ uvs[ i ].clone(), uvs[ i + 1 ].clone(), centerUV.clone() ] );
+		this.faces.push( new THREE.Face3( i, i + 1, 0, [ n.clone(), n.clone(), n.clone() ] ) );	//生成三角面的顶点索引
+		this.faceVertexUvs[ 0 ].push( [ uvs[ i ].clone(), uvs[ i + 1 ].clone(), centerUV.clone() ] );	//生成与三角面的顶点索引顺序相同的三角面的uvs坐标
 
 	}
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算面法线
 
-	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );	//生成圆形(多边形)对象的球形边界.
 
 };
-
+/*************************************************
+****下面是CircleGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.CircleGeometry.prototype = Object.create( THREE.Geometry.prototype );
