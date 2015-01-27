@@ -2,18 +2,31 @@
  * @author mrdoob / http://mrdoob.com/
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
-
+/*
+///PlaneGeometry用来在三维空间内创建一个平面对象.
+///
+///	用法: var geometry = new THREE.PlaneGeometry(5,5,20,32);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var plane = new THREE.Mesh(geometry,material);
+/// 	  scene.add(plane);
+*/
+///<summary>PlaneGeometry</summary>
+///<param name ="width" type="float">平面的高度</param>
+///<param name ="height" type="float">平面的宽度</param>
+///<param name ="widthSegments" type="int">对象的宽方向的细分线段数</param>
+///<param name ="heightSegments" type="int">对象的高方向的细分线段数</param>
 THREE.PlaneGeometry = function ( width, height, widthSegments, heightSegments ) {
 
 	THREE.Geometry.call( this );
 
 	this.parameters = {
-		width: width,
-		height: height,
-		widthSegments: widthSegments,
-		heightSegments: heightSegments
+		width: width,		//平面的高度
+		height: height,		//平面的宽度
+		widthSegments: widthSegments,		//对象的宽方向的细分线段数
+		heightSegments: heightSegments		//对象的高方向的细分线段数
 	};
 
+	//高度,宽度的一半,设置平面对象的放置点,为中心点.
 	var ix, iz;
 	var width_half = width / 2;
 	var height_half = height / 2;
@@ -27,8 +40,8 @@ THREE.PlaneGeometry = function ( width, height, widthSegments, heightSegments ) 
 	var segment_width = width / gridX;
 	var segment_height = height / gridZ;
 
-	var normal = new THREE.Vector3( 0, 0, 1 );
-
+	var normal = new THREE.Vector3( 0, 0, 1 );	//设置法线方向.
+	//下面这两段算法还是先计算出所有的顶点,三角面,uv索引顺序,
 	for ( iz = 0; iz < gridZ1; iz ++ ) {
 
 		var y = iz * segment_height - height_half;
@@ -76,5 +89,7 @@ THREE.PlaneGeometry = function ( width, height, widthSegments, heightSegments ) 
 	}
 
 };
-
+/*************************************************
+****下面是PlaneGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.PlaneGeometry.prototype = Object.create( THREE.Geometry.prototype );
