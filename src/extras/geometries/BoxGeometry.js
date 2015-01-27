@@ -22,12 +22,12 @@ THREE.BoxGeometry = function ( width, height, depth, widthSegments, heightSegmen
 	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象BoxGeometry来使用.
 
 	this.parameters = {
-		width: width,
-		height: height,
-		depth: depth,
-		widthSegments: widthSegments,
-		heightSegments: heightSegments,
-		depthSegments: depthSegments
+		width: width,		//宽度
+		height: height,		//高度
+		depth: depth,		//深度
+		widthSegments: widthSegments,	//宽度细分线段数
+		heightSegments: heightSegments,	//高度细分线段数
+		depthSegments: depthSegments	//深度细分线段数.
 	};
 
 	this.widthSegments = widthSegments || 1;

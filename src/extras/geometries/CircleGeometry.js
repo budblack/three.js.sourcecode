@@ -3,6 +3,7 @@
  */
 /*
 ///CircleGeometry用来在三维空间内创建一个圆形对象,因为圆形对象是由参数segments指定的一个个三角形围绕圆心拼接而成,所以也可以是多边形对象.
+/// NOTE: CircleGeometry对象的妙用,通过参数thetaStart和参数thetaLength可以绘制圆弧,扇形,调整参数segments可以绘制多边形.还可以绘制圆形.
 ///
 ///	用法: var radius = 5, segments = 32;
 ///		  var geometry = new THREE.CircleGeometry(radius,segments);	
@@ -17,13 +18,13 @@
 ///<param name ="thetaLength" type="int">可选参数,圆(多边形)的结束点,默认初始化为Math.PI * 2</param>
 THREE.CircleGeometry = function ( radius, segments, thetaStart, thetaLength ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象CircleGeometry来使用.
 
 	this.parameters = {
-		radius: radius,
-		segments: segments,
-		thetaStart: thetaStart,
-		thetaLength: thetaLength
+		radius: radius,	//半径 
+		segments: segments,	//线段数或边数
+		thetaStart: thetaStart,	//圆弧起始点
+		thetaLength: thetaLength	//圆弧结束点
 	};
 
 	radius = radius || 50;	//圆形(多边形)半径,默认初始化为50.

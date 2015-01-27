@@ -1,34 +1,49 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
+/*
+///CylinderGeometry用来在三维空间内创建一个圆柱,圆锥,圆桶对象.
+/// NOTE: 和CircleGeometry对象一样,如果我们把参数radialSeagments的值设置成4,是不是就变成了棱台了,设置成3,并且radiusTop设置成0,是不是就是金字塔了????
+///
+///	用法: var geometry = new THREE.CircleGeometry(5,5,20,32);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var clinder = new THREE.Mesh(geometry,material);
+/// 	  scene.add(clinder);
+*/
+///<summary>CylinderGeometry</summary>
+///<param name ="radiusTop" type="float">对象的上表面半径</param>
+///<param name ="radiusBottom" type="float">对象的下表面半径</param>
+///<param name ="height" type="float">对象的高度</param>
+///<param name ="radialSegments" type="int">对象的半径方向的细分线段数</param>
+///<param name ="heightSegments" type="int">对象的高度细分线段数</param>
+///<param name ="openEnded" type="boolean">是否开口,如果设置为true,并且radiusTop参数不为0,将会是一个没有上表面,下表面的几何对象.</param>
 THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象CylinderGeometry来使用.
 
 	this.parameters = {
-		radiusTop: radiusTop,
-		radiusBottom: radiusBottom,
-		height: height,
-		radialSegments: radialSegments,
-		heightSegments: heightSegments,
-		openEnded: openEnded
+		radiusTop: radiusTop,	//对象的上表面半径
+		radiusBottom: radiusBottom,		//对象的下表面半径
+		height: height,					//对象的高度
+		radialSegments: radialSegments,	//对象的半径方向的细分线段数
+		heightSegments: heightSegments,	//对象的高度细分线段数
+		openEnded: openEnded			//是否开口,如果设置为true,并且radiusTop参数不为0,将会是一个没有上表面,下表面的几何对象.
 	};
 
-	radiusTop = radiusTop !== undefined ? radiusTop : 20;
-	radiusBottom = radiusBottom !== undefined ? radiusBottom : 20;
-	height = height !== undefined ? height : 100;
+	radiusTop = radiusTop !== undefined ? radiusTop : 20;	//对象的上表面半径,如果未设置,默认为20
+	radiusBottom = radiusBottom !== undefined ? radiusBottom : 20;	//对象的下表面半径,如果未设置,默认为20
+	height = height !== undefined ? height : 100;	//对象的高度,如果未设置,默认为20
 
-	radialSegments = radialSegments || 8;
-	heightSegments = heightSegments || 1;
+	radialSegments = radialSegments || 8;	//对象的半径方向的细分线段数,如果未设置,默认为20
+	heightSegments = heightSegments || 1;	//对象的高度细分线段数,如果未设置,默认为20
 
-	openEnded = openEnded !== undefined ? openEnded : false;
+	openEnded = openEnded !== undefined ? openEnded : false;	//是否开口,如果设置为true,并且radiusTop参数不为0,将会是一个没有上表面,下表面的几何对象.默认为false
 
 	var heightHalf = height / 2;
 
 	var x, y, vertices = [], uvs = [];
 
-	for ( y = 0; y <= heightSegments; y ++ ) {
+	for ( y = 0; y <= heightSegments; y ++ ) {	//根据高度细分线段数,遍历计算顶点坐标和排列uv.
 
 		var verticesRow = [];
 		var uvsRow = [];
@@ -39,9 +54,9 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 		for ( x = 0; x <= radialSegments; x ++ ) {
 
 			var u = x / radialSegments;
-
+			//计算顶点的x,y,z坐标,记住下边的公式,这个公式很常用,极坐标转为直角坐标.就是他.
 			var vertex = new THREE.Vector3();
-			vertex.x = radius * Math.sin( u * Math.PI * 2 );
+			vertex.x = radius * Math.sin( u * Math.PI * 2 );	//
 			vertex.y = - v * height + heightHalf;
 			vertex.z = radius * Math.cos( u * Math.PI * 2 );
 
@@ -56,7 +71,7 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 		uvs.push( uvsRow );
 
 	}
-
+	//上面是圆柱的一列顶点数据,下边是将这一列顶点复制一圈.
 	var tanTheta = ( radiusBottom - radiusTop ) / height;
 	var na, nb;
 
@@ -94,8 +109,8 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 			var uv3 = uvs[ y + 1 ][ x + 1 ].clone();
 			var uv4 = uvs[ y ][ x + 1 ].clone();
 
-			this.faces.push( new THREE.Face3( v1, v2, v4, [ n1, n2, n4 ] ) );
-			this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv4 ] );
+			this.faces.push( new THREE.Face3( v1, v2, v4, [ n1, n2, n4 ] ) );	//计算三角面索引
+			this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv4 ] );					//计算uvs纹理贴图坐标索引.
 
 			this.faces.push( new THREE.Face3( v2, v3, v4, [ n2.clone(), n3, n4.clone() ] ) );
 			this.faceVertexUvs[ 0 ].push( [ uv2.clone(), uv3, uv4.clone() ] );
@@ -105,7 +120,7 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 	}
 
 	// top cap
-
+	//上表面
 	if ( openEnded === false && radiusTop > 0 ) {
 
 		this.vertices.push( new THREE.Vector3( 0, heightHalf, 0 ) );
@@ -132,7 +147,7 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 	}
 
 	// bottom cap
-
+	//下表面
 	if ( openEnded === false && radiusBottom > 0 ) {
 
 		this.vertices.push( new THREE.Vector3( 0, - heightHalf, 0 ) );
@@ -158,8 +173,10 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegme
 
 	}
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算面的法线.
 
 }
-
+/*************************************************
+****下面是CylinderGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.CylinderGeometry.prototype = Object.create( THREE.Geometry.prototype );
