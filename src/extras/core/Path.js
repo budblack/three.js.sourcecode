@@ -1,96 +1,135 @@
 /**
  * @author zz85 / http://www.lab4games.net/zz85/blog
  * Creates free form 2d path using series of points, lines or curves.
+ * 使用系列点创建自由形式的二维路径，直线或曲线。
  *
  **/
-
+/*
+///Path类创建2d的路径,包括点,线,和立方体,类似于HTML5 2D画布的API,curvePath类的扩展.
+*/
+///<summary>Curve</summary>
+///<param name ="points" type="Vector2Array">2维向量数组</param>
 THREE.Path = function ( points ) {
 
-	THREE.CurvePath.call(this);
+	THREE.CurvePath.call(this);	//调用CurvePath对象的call方法,将原本属于CurvePath的方法交给当前对象Path来使用.
 
-	this.actions = [];
+	this.actions = [];	//可用的动作数组.
 
-	if ( points ) {
+	if ( points ) {		//如果有参数points
 
 		this.fromPoints( points );
 
 	}
 
 };
-
+/*************************************************
+****下面是Path对象的方法属性定义,继承自CurvePath对象.
+**************************************************/
 THREE.Path.prototype = Object.create( THREE.CurvePath.prototype );
 
 THREE.PathActions = {
 
-	MOVE_TO: 'moveTo',
-	LINE_TO: 'lineTo',
-	QUADRATIC_CURVE_TO: 'quadraticCurveTo', // Bezier quadratic curve
-	BEZIER_CURVE_TO: 'bezierCurveTo', 		// Bezier cubic curve
-	CSPLINE_THRU: 'splineThru',				// Catmull-rom spline
-	ARC: 'arc',								// Circle
-	ELLIPSE: 'ellipse'
+	MOVE_TO: 'moveTo',		//把路径移动到画布中的指定点，不创建线条
+	LINE_TO: 'lineTo',		//添加一个新点，然后在画布中创建从该点到最后指定点的线条
+	QUADRATIC_CURVE_TO: 'quadraticCurveTo', // Bezier quadratic curve //创建二次贝塞尔曲线
+	BEZIER_CURVE_TO: 'bezierCurveTo', 		// Bezier cubic curve 	  //创建三次贝塞尔曲线
+	CSPLINE_THRU: 'splineThru',				// Catmull-rom spline  	  //样条曲线通过
+	ARC: 'arc',								// Circle				  //创建弧/曲线（用于创建圆形或部分圆）
+	ELLIPSE: 'ellipse'												  //创建椭圆.
 };
 
 // TODO Clean up PATH API
-
+/*
+///fromPoints方法通过连接二维向量数组(参数vectors)内所有的顶点,创建路径.
+*/
+///<summary>fromPoints</summary>
+///<param name ="vectors" type="Vector2Array">包含顶点信息的二维向量数组</param>
 // Create path using straight lines to connect all points
+// 连接所有的点,创建路径.
 // - vectors: array of Vector2
-
+// - vectors:2位向量数组.
 THREE.Path.prototype.fromPoints = function ( vectors ) {
 
-	this.moveTo( vectors[ 0 ].x, vectors[ 0 ].y );
+	this.moveTo( vectors[ 0 ].x, vectors[ 0 ].y );	//将光标移到vectors数组中第一个顶点的位置.
 
-	for ( var v = 1, vlen = vectors.length; v < vlen; v ++ ) {
+	for ( var v = 1, vlen = vectors.length; v < vlen; v ++ ) {	//遍历二维数组
 
-		this.lineTo( vectors[ v ].x, vectors[ v ].y );
+		this.lineTo( vectors[ v ].x, vectors[ v ].y );	//调用lineTo方法,连接所有的顶点.
 
 	};
 
 };
 
 // startPath() endPath()?
-
+/*
+///moveTo方法把路径移动到画布中的指定点，不创建线条,把moveTo动作和坐标压入actions数组.
+*/
+///<summary>moveTo</summary>
+///<param name ="x" type="float">x坐标</param>
+///<param name ="y" type="float">y坐标</param>
 THREE.Path.prototype.moveTo = function ( x, y ) {
 
 	var args = Array.prototype.slice.call( arguments );
-	this.actions.push( { action: THREE.PathActions.MOVE_TO, args: args } );
+	this.actions.push( { action: THREE.PathActions.MOVE_TO, args: args } );		//把moveTo动作和坐标压入actions数组
 
 };
-
+/*
+///lineTo方法添加一个新点，然后在画布中创建从该点到最后指定点的线条,把lineTo动作和坐标压入actions数组.
+*/
+///<summary>moveTo</summary>
+///<param name ="x" type="float">结束点x坐标</param>
+///<param name ="y" type="float">结束点y坐标</param>
 THREE.Path.prototype.lineTo = function ( x, y ) {
 
 	var args = Array.prototype.slice.call( arguments );
 
 	var lastargs = this.actions[ this.actions.length - 1 ].args;
 
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 
-	var curve = new THREE.LineCurve( new THREE.Vector2( x0, y0 ), new THREE.Vector2( x, y ) );
-	this.curves.push( curve );
+	var curve = new THREE.LineCurve( new THREE.Vector2( x0, y0 ), new THREE.Vector2( x, y ) );	//创建可用的2d线段对象
+	this.curves.push( curve );	//将曲线压入曲线对象数组
 
-	this.actions.push( { action: THREE.PathActions.LINE_TO, args: args } );
+	this.actions.push( { action: THREE.PathActions.LINE_TO, args: args } );	//把lineTo动作和坐标压入actions数组
 
 };
-
+/*
+///quadraticCurveTo方法创建二次贝塞尔曲线,把quadraticCurveTo动作和坐标压入actions数组.
+*/
+///<summary>quadraticCurveTo</summary>
+///<param name ="aCPx" type="float">中间点x坐标</param>
+///<param name ="aCPy" type="float">中间点y坐标</param>
+///<param name ="aX" type="float">结束点x坐标</param>
+///<param name ="aY" type="float">结束点y坐标</param>
 THREE.Path.prototype.quadraticCurveTo = function( aCPx, aCPy, aX, aY ) {
 
 	var args = Array.prototype.slice.call( arguments );
 
 	var lastargs = this.actions[ this.actions.length - 1 ].args;
 
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 
 	var curve = new THREE.QuadraticBezierCurve( new THREE.Vector2( x0, y0 ),
 												new THREE.Vector2( aCPx, aCPy ),
-												new THREE.Vector2( aX, aY ) );
-	this.curves.push( curve );
+												new THREE.Vector2( aX, aY ) );		//创建2d的贝塞尔曲线对象.
+	this.curves.push( curve );	//将曲线压入曲线对象数组
 
-	this.actions.push( { action: THREE.PathActions.QUADRATIC_CURVE_TO, args: args } );
+	this.actions.push( { action: THREE.PathActions.QUADRATIC_CURVE_TO, args: args } );	//把quadraticCurveTo动作和坐标压入actions数组.
 
 };
 
+/*
+///bezierCurveTo方法创建平滑的二次贝塞尔曲线,把bezierCurveTo动作和坐标压入actions数组.
+*/
+///<summary>bezierCurveTo</summary>
+///<param name ="aCP1x" type="float">第一个控制点点x坐标</param>
+///<param name ="aCP1y" type="float">第一个控制点y坐标</param>
+///<param name ="aCP2x" type="float">第二个控制点x坐标</param>
+///<param name ="aCP2y" type="float">第二个控制点y坐标</param>
+///<param name ="aX" type="float">结束点x坐标</param>
+///<param name ="aY" type="float">结束点y坐标</param>
 THREE.Path.prototype.bezierCurveTo = function( aCP1x, aCP1y,
 											   aCP2x, aCP2y,
 											   aX, aY ) {
@@ -99,85 +138,137 @@ THREE.Path.prototype.bezierCurveTo = function( aCP1x, aCP1y,
 
 	var lastargs = this.actions[ this.actions.length - 1 ].args;
 
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 
 	var curve = new THREE.CubicBezierCurve( new THREE.Vector2( x0, y0 ),
 											new THREE.Vector2( aCP1x, aCP1y ),
 											new THREE.Vector2( aCP2x, aCP2y ),
-											new THREE.Vector2( aX, aY ) );
+											new THREE.Vector2( aX, aY ) );	//创建平滑的贝塞尔曲线对象
 	this.curves.push( curve );
 
-	this.actions.push( { action: THREE.PathActions.BEZIER_CURVE_TO, args: args } );
+	this.actions.push( { action: THREE.PathActions.BEZIER_CURVE_TO, args: args } );	//把bezierCurveTo动作和坐标压入actions数组
 
 };
 
+/*
+///splineThru方法通过一系列点组成的数组创建一个平滑的二维样条曲线的,把splineThru动作和坐标压入actions数组.
+*/
+///<summary>splineThru</summary>
+///<param name ="pts" type="Vector2Array">顶点组成的数组</param>
 THREE.Path.prototype.splineThru = function( pts /*Array of Vector*/ ) {
 
 	var args = Array.prototype.slice.call( arguments );
 	var lastargs = this.actions[ this.actions.length - 1 ].args;
 
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 //---
 	var npts = [ new THREE.Vector2( x0, y0 ) ];
-	Array.prototype.push.apply( npts, pts );
+	Array.prototype.push.apply( npts, pts );	//将起始点和顶点组成的数组合并.
 
-	var curve = new THREE.SplineCurve( npts );
+	var curve = new THREE.SplineCurve( npts );	//创建平滑的二维样条曲线对象.
 	this.curves.push( curve );
 
-	this.actions.push( { action: THREE.PathActions.CSPLINE_THRU, args: args } );
+	this.actions.push( { action: THREE.PathActions.CSPLINE_THRU, args: args } );	//把splineThru动作和坐标压入actions数组
 
 };
 
 // FUTURE: Change the API or follow canvas API?
 
+/*
+///arc方法创建弧/曲线（用于创建圆形或部分圆）,把arc动作和坐标压入actions数组.
+*/
+///<summary>arc</summary>
+///<param name ="aX" type="float">圆形或圆弧的圆心x坐标</param>
+///<param name ="aY" type="float">圆形或圆弧的圆心y坐标</param>
+///<param name ="aRadius" type="float">圆形或圆弧的半径</param>
+///<param name ="aStartAngle" type="float">圆形或圆弧的起始点角度,用弧度表示</param>
+///<param name ="aEndAngle" type="float">圆形或圆弧的结束点点角度,用弧度表示</param>
+///<param name ="aClockwise" type="boolean">x是否是顺时针</param>
 THREE.Path.prototype.arc = function ( aX, aY, aRadius,
 									  aStartAngle, aEndAngle, aClockwise ) {
 
 	var lastargs = this.actions[ this.actions.length - 1].args;
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 
 	this.absarc(aX + x0, aY + y0, aRadius,
-		aStartAngle, aEndAngle, aClockwise );
+		aStartAngle, aEndAngle, aClockwise );	//调用absarc方法,创建圆弧对象.
 
  };
 
+/*
+///absarc方法创建弧/曲线（用于创建圆形或部分圆）,把absarc动作和坐标压入actions数组.
+*/
+///<summary>absarc</summary>
+///<param name ="aX" type="float">圆形或圆弧的圆心x坐标</param>
+///<param name ="aY" type="float">圆形或圆弧的圆心y坐标</param>
+///<param name ="aRadius" type="float">圆形或圆弧的半径</param>
+///<param name ="aStartAngle" type="float">圆形或圆弧的起始点角度,用弧度表示</param>
+///<param name ="aEndAngle" type="float">圆形或圆弧的结束点点角度,用弧度表示</param>
+///<param name ="aClockwise" type="boolean">x是否是顺时针</param>
  THREE.Path.prototype.absarc = function ( aX, aY, aRadius,
 									  aStartAngle, aEndAngle, aClockwise ) {
-	this.absellipse(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise);
+	this.absellipse(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise);	//调用absellipse方法,创建圆弧对象.
  };
 
+/*
+///ellipse方法创建椭圆弧/曲线（用于创建椭圆或部分椭圆）,把ellipse动作和坐标压入actions数组.
+*/
+///<summary>absarc</summary>
+///<param name ="aX" type="float">椭圆或椭圆弧的圆心x坐标</param>
+///<param name ="aY" type="float">椭圆或椭圆弧的圆心y坐标</param>
+///<param name ="xRadius" type="float">椭圆或椭圆弧的半径</param>
+///<param name ="yRadius" type="float">椭圆或椭圆弧的半径</param>
+///<param name ="aStartAngle" type="float">椭圆或椭圆弧的起始点角度,用弧度表示</param>
+///<param name ="aEndAngle" type="float">椭圆或椭圆弧的结束点点角度,用弧度表示</param>
+///<param name ="aClockwise" type="boolean">x是否是顺时针</param>
 THREE.Path.prototype.ellipse = function ( aX, aY, xRadius, yRadius,
 									  aStartAngle, aEndAngle, aClockwise ) {
 
 	var lastargs = this.actions[ this.actions.length - 1].args;
-	var x0 = lastargs[ lastargs.length - 2 ];
-	var y0 = lastargs[ lastargs.length - 1 ];
+	var x0 = lastargs[ lastargs.length - 2 ];	//通过计算获得起始点x坐标
+	var y0 = lastargs[ lastargs.length - 1 ];	//通过计算获得起始点y坐标
 
 	this.absellipse(aX + x0, aY + y0, xRadius, yRadius,
-		aStartAngle, aEndAngle, aClockwise );
+		aStartAngle, aEndAngle, aClockwise );		//调用absellipse方法,创建椭圆弧对象.
 
  };
 
-
+/*
+///absellipse方法创建椭圆弧/曲线（用于创建椭圆或部分椭圆）,把absellipse动作和坐标压入actions数组.
+*/
+///<summary>absellipse</summary>
+///<param name ="aX" type="float">椭圆或椭圆弧的圆心x坐标</param>
+///<param name ="aY" type="float">椭圆或椭圆弧的圆心y坐标</param>
+///<param name ="xRadius" type="float">椭圆或椭圆弧的半径</param>
+///<param name ="yRadius" type="float">椭圆或椭圆弧的半径</param>
+///<param name ="aStartAngle" type="float">椭圆或椭圆弧的起始点角度,用弧度表示</param>
+///<param name ="aEndAngle" type="float">椭圆或椭圆弧的结束点点角度,用弧度表示</param>
+///<param name ="aClockwise" type="boolean">x是否是顺时针</param>
 THREE.Path.prototype.absellipse = function ( aX, aY, xRadius, yRadius,
 									  aStartAngle, aEndAngle, aClockwise ) {
 
 	var args = Array.prototype.slice.call( arguments );
 	var curve = new THREE.EllipseCurve( aX, aY, xRadius, yRadius,
-									aStartAngle, aEndAngle, aClockwise );
-	this.curves.push( curve );
+									aStartAngle, aEndAngle, aClockwise );	//调用EllipseCurve方法,创建椭圆弧椭圆对象.
+	this.curves.push( curve );		//将曲线对象压入曲线数组.
 
 	var lastPoint = curve.getPoint(1);
 	args.push(lastPoint.x);
 	args.push(lastPoint.y);
 
-	this.actions.push( { action: THREE.PathActions.ELLIPSE, args: args } );
+	this.actions.push( { action: THREE.PathActions.ELLIPSE, args: args } );		//把ELLIPSE动作和坐标压入actions数组.
 
  };
 
+/*
+///getSpacedPoints方法根据divisions将路径等分,获得在路径对象上等分点的点序列.如果没有设置参数divisions,默认初始化为40等分.返回对应等分线段端点在路径上的相对位置顶点.
+*/
+///<summary>getSpacedPoints</summary>
+///<param name ="divisions" type="int">根据divisions将路径等分,获得在路径对象上等分点的点序列.如果没有设置参数divisions,默认初始化为50等分.</param>
+///<returns type="Vector3Array">返回对应等分线段端点在路径上的相对位置顶点.</returns>
 THREE.Path.prototype.getSpacedPoints = function ( divisions, closedPath ) {
 
 	if ( ! divisions ) divisions = 40;
@@ -198,20 +289,30 @@ THREE.Path.prototype.getSpacedPoints = function ( divisions, closedPath ) {
 	//
 	// }
 
-	return points;
+	return points;	//返回对应等分线段端点在路径上的相对位置顶点
 
 };
 
+/*
+///getPoints方法根据divisions将路径等分,获得在路径对象上等分点的点序列.如果没有设置参数divisions,默认初始化为12等分.返回对应等分线段顶点的坐标数组.
+///定量等分曲线
+*/
+///<summary>getPoints</summary>
+///<param name ="divisions" type="int">根据divisions将路径等分,获得在路径对象上等分点的点序列.如果没有设置参数divisions,默认初始化为12等分.</param>
+///<param name ="closedPath" type="boolean">如果closePath设置为true,添加闭合点,即第一个顶点,可选参数.</param>
+///<returns type="Vector3Array">返回对应等分线段顶点的坐标数组.</returns>
+
 /* Return an array of vectors based on contour of the path */
+// 基于路径轮廓返回一个矢量数组
 
 THREE.Path.prototype.getPoints = function( divisions, closedPath ) {
 
 	if (this.useSpacedPoints) {
 		console.log('tata');
-		return this.getSpacedPoints( divisions, closedPath );
+		return this.getSpacedPoints( divisions, closedPath );	//调用getSpacePoints方法,将路径等分,获得等分线段的分界点坐标.
 	}
 
-	divisions = divisions || 12;
+	divisions = divisions || 12;	//如果divisions没有设置,默认初始化为12
 
 	var points = [];
 
@@ -220,14 +321,14 @@ THREE.Path.prototype.getPoints = function( divisions, closedPath ) {
 		laste, j,
 		t, tx, ty;
 
-	for ( i = 0, il = this.actions.length; i < il; i ++ ) {
+	for ( i = 0, il = this.actions.length; i < il; i ++ ) {		//遍历actions数组
 
 		item = this.actions[ i ];
 
 		action = item.action;
 		args = item.args;
 
-		switch( action ) {
+		switch( action ) {	//根据action计算路径的长度,并返回总长度.
 
 		case THREE.PathActions.MOVE_TO:
 
@@ -421,6 +522,7 @@ THREE.Path.prototype.getPoints = function( divisions, closedPath ) {
 
 
 	// Normalize to remove the closing point by default.
+	// 归一化默认会删除闭合点,
 	var lastPoint = points[ points.length - 1];
 	var EPSILON = 0.0000000001;
 	if ( Math.abs(lastPoint.x - points[ 0 ].x) < EPSILON &&
@@ -428,7 +530,7 @@ THREE.Path.prototype.getPoints = function( divisions, closedPath ) {
 		points.splice( points.length - 1, 1);
 	if ( closedPath ) {
 
-		points.push( points[ 0 ] );
+		points.push( points[ 0 ] );	//如果closePath设置为true,添加闭合点,即第一个顶点
 
 	}
 

@@ -17,7 +17,7 @@
 ///<param name ="heightSegments" type="int">对象的高方向的细分线段数</param>
 THREE.PlaneGeometry = function ( width, height, widthSegments, heightSegments ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象PlaneGeometry来使用.
 
 	this.parameters = {
 		width: width,		//平面的高度

@@ -121,7 +121,7 @@ THREE.Curve.prototype.getPoints = function ( divisions ) {
 /*
 ///getSpacedPoints方法根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.
 */
-///<summary>getPointAt</summary>
+///<summary>getSpacedPoints</summary>
 ///<param name ="divisions" type="int">根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.</param>
 ///<returns type="Vector3Array">返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.</returns>
 // Get sequence of points using getPointAt( u )
