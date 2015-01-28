@@ -17,7 +17,7 @@ THREE.Path = function ( points ) {
 
 	if ( points ) {		//如果有参数points
 
-		this.fromPoints( points );
+		this.fromPoints( points );	//调用fromPoints方法创建路径.
 
 	}
 

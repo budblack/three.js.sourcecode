@@ -6,10 +6,10 @@
  *
  * parameters = {
  *
- *	curveSegments: <int>, // number of points on the curves. NOT USED AT THE MOMENT.
+ *	curveSegments: <int>, // number of points on the curves. NOT USED AT THE MOMENT. 曲线上的顶点数量
  *
- *	material: <int> // material index for front and back faces
- *	uvGenerator: <Object> // object that provides UV generator functions
+ *	material: <int> // material index for front and back faces 正面和背面材质索引
+ *	uvGenerator: <Object> // object that provides UV generator functions UV坐标生成函数
  *
  * }
  **/

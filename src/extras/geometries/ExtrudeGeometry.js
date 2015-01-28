@@ -5,21 +5,21 @@
  *
  * parameters = {
  *
- *  curveSegments: <int>, // number of points on the curves
- *  steps: <int>, // number of points for z-side extrusions / used for subdividing segements of extrude spline too
- *  amount: <int>, // Depth to extrude the shape
+ *  curveSegments: <int>, // number of points on the curves 曲线上的顶点数量
+ *  steps: <int>, // number of points for z-side extrusions / used for subdividing segements of extrude spline too 步数,曲线拉伸的细分线段数
+ *  amount: <int>, // Depth to extrude the shape 拉伸线段的厚度.
  *
- *  bevelEnabled: <bool>, // turn on bevel
- *  bevelThickness: <float>, // how deep into the original shape bevel goes
- *  bevelSize: <float>, // how far from shape outline is bevel
- *  bevelSegments: <int>, // number of bevel layers
+ *  bevelEnabled: <bool>, // turn on bevel 是否启用倒角
+ *  bevelThickness: <float>, // how deep into the original shape bevel goes 倒角的厚度
+ *  bevelSize: <float>, // how far from shape outline is bevel 从截面外轮廓倒角的尺寸.
+ *  bevelSegments: <int>, // number of bevel layers 倒角部分的细分线段数.
  *
- *  extrudePath: <THREE.CurvePath> // 3d spline path to extrude shape along. (creates Frames if .frames aren't defined)
- *  frames: <THREE.TubeGeometry.FrenetFrames> // containing arrays of tangents, normals, binormals
+ *  extrudePath: <THREE.CurvePath> // 3d spline path to extrude shape along. (creates Frames if .frames aren't defined) 截面拉伸的路径,3d的spline对象.
+ *  frames: <THREE.TubeGeometry.FrenetFrames> // containing arrays of tangents, normals, binormals 包含三角形,法线,副法线数组.
  *
- *  material: <int> // material index for front and back faces
- *  extrudeMaterial: <int> // material index for extrusion and beveled faces
- *  uvGenerator: <Object> // object that provides UV generator functions
+ *  material: <int> // material index for front and back faces 正面和背面材质索引
+ *  extrudeMaterial: <int> // material index for extrusion and beveled faces 拉伸体和斜面的材质索引
+ *  uvGenerator: <Object> // object that provides UV generator functions UV坐标生成函数.
  *
  * }
  **/

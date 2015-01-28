@@ -4,40 +4,97 @@
  **/
 
 // STEP 1 Create a path.
+// 1. 创建路径
 // STEP 2 Turn path into shape.
+// 2. 将路径变成截面
 // STEP 3 ExtrudeGeometry takes in Shape/Shapes
+// 3. 将截面拉伸成几何体
 // STEP 3a - Extract points from each shape, turn to vertices
+// 3a. 导出所有的截面顶点到vertices属性中
 // STEP 3b - Triangulate each shape, add faces.
-
+// 3b. 组织所有的顶点为三角面.
+/*
+///Shape对象将二维平面生成图形对象的抽象基类.
+///
+*/
+///<summary>Shape</summary>
 THREE.Shape = function () {
 
-	THREE.Path.apply( this, arguments );
-	this.holes = [];
+	THREE.Path.apply( this, arguments );	//调用Path对象的call方法,将原本属于Path的方法交给当前对象Shape来使用.
+	this.holes = [];	//将孔洞存放到holes数组中.
 
 };
-
+/*************************************************
+****下面是Shape对象的方法属性定义,继承自Path对象.
+**************************************************/
 THREE.Shape.prototype = Object.create( THREE.Path.prototype );
 
+/*
+///extrude生成拉伸几何体的便利方法.
+///
+/// parameters = {
+///
+///  curveSegments: <int>, // number of points on the curves 曲线上的顶点数量
+///  steps: <int>, // number of points for z-side extrusions / used for subdividing segements of extrude spline too 步数,曲线拉伸的细分线段数
+///  amount: <int>, // Depth to extrude the shape 拉伸线段的厚度.
+///
+///  bevelEnabled: <bool>, // turn on bevel 是否启用倒角
+///  bevelThickness: <float>, // how deep into the original shape bevel goes 倒角的厚度
+///  bevelSize: <float>, // how far from shape outline is bevel 从截面外轮廓倒角的尺寸.
+///  bevelSegments: <int>, // number of bevel layers 倒角部分的细分线段数.
+///
+///  extrudePath: <THREE.CurvePath> // 3d spline path to extrude shape along. (creates Frames if .frames aren't defined) 截面拉伸的路径,3d的spline对象.
+///  frames: <THREE.TubeGeometry.FrenetFrames> // containing arrays of tangents, normals, binormals 包含三角形,法线,副法线数组.
+///
+///  material: <int> // material index for front and back faces 正面和背面材质索引
+///  extrudeMaterial: <int> // material index for extrusion and beveled faces 拉伸体和斜面的材质索引
+///  uvGenerator: <Object> // object that provides UV generator functions UV坐标生成函数.
+///
+/// }
+*/
+///<summary>extrude</summary>
+///<param name ="options" type="String">参数选项</param>
+///<returns type="THREE.ExtrudeGeometry">拉伸几何体.</returns>
 // Convenience method to return ExtrudeGeometry
-
+// 生成拉伸几何体的便利方法.
 THREE.Shape.prototype.extrude = function ( options ) {
 
 	var extruded = new THREE.ExtrudeGeometry( this, options );
 	return extruded;
 
 };
-
+/*
+///makeGeometry创建图形几何体的便利方法
+///
+/// parameters = {
+///
+///	curveSegments: <int>, // number of points on the curves. NOT USED AT THE MOMENT. 曲线上的顶点数量
+///
+///	material: <int> // material index for front and back faces 正面和背面材质索引
+///	uvGenerator: <Object> // object that provides UV generator functions UV坐标生成函数
+///
+/// }
+*/
+///<summary>makeGeometry</summary>
+///<param name ="options" type="String">参数选项</param>
+///<returns type="THREE.ShapeGeometry">拉伸几何体.</returns>
 // Convenience method to return ShapeGeometry
-
+// 创建图形几何体的便利方法.
 THREE.Shape.prototype.makeGeometry = function ( options ) {
 
 	var geometry = new THREE.ShapeGeometry( this, options );
 	return geometry;
 
 };
-
+/*
+///getPointsHoles方法根据divisions将孔洞等分,获得在孔洞对象上等分点的点序列.如果没有设置参数divisions.返回对应等分孔洞顶点的坐标数组.
+///定量等分孔洞
+*/
+///<summary>getPointsHoles</summary>
+///<param name ="divisions" type="int">根据divisions将孔洞等分,获得在孔洞对象上等分点的点序列.如果没有设置参数divisions.</param>
+///<returns type="Vector3Array">返回对应等分孔洞顶点的坐标数组.</returns>
 // Get points of holes
-
+// 定量等分,获得所有孔洞的顶点
 THREE.Shape.prototype.getPointsHoles = function ( divisions ) {
 
 	var i, il = this.holes.length, holesPts = [];
@@ -48,12 +105,18 @@ THREE.Shape.prototype.getPointsHoles = function ( divisions ) {
 
 	}
 
-	return holesPts;
+	return holesPts;	//返回对应等分孔洞顶点的坐标数组
 
 };
-
+/*
+///getSpacedPointsHoles方法根据divisions将孔洞等分,获得在孔洞对象上等分点的点序列.如果没有设置参数divisions.返回对应等分孔洞顶点的坐标数组.
+///定距等分孔洞
+*/
+///<summary>getSpacedPointsHoles</summary>
+///<param name ="divisions" type="int">根据divisions将孔洞等分,获得在孔洞对象上等分点的点序列.如果没有设置参数divisions.</param>
+///<returns type="Vector3Array">返回对应等分孔洞顶点的坐标数组.</returns>
 // Get points of holes (spaced by regular distance)
-
+// 定距等分,获得所有孔洞的顶点.
 THREE.Shape.prototype.getSpacedPointsHoles = function ( divisions ) {
 
 	var i, il = this.holes.length, holesPts = [];
@@ -64,13 +127,19 @@ THREE.Shape.prototype.getSpacedPointsHoles = function ( divisions ) {
 
 	}
 
-	return holesPts;
+	return holesPts;	//返回对应等分孔洞顶点的坐标数组
 
 };
 
-
+/*
+///extractAllPoints方法根据divisions将孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.返回所有界面和孔洞等分顶点的坐标数组.
+///定量等分孔洞
+*/
+///<summary>extractAllPoints</summary>
+///<param name ="divisions" type="int">根据divisions将所有界面和孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.</param>
+///<returns type="Vector3Array">返回所有界面和孔洞等分顶点的坐标数组.</returns>
 // Get points of shape and holes (keypoints based on segments parameter)
-
+// 定量等分,获得所有界面和孔洞的顶点.
 THREE.Shape.prototype.extractAllPoints = function ( divisions ) {
 
 	return {
@@ -82,6 +151,14 @@ THREE.Shape.prototype.extractAllPoints = function ( divisions ) {
 
 };
 
+/*
+///extractPoints方法根据divisions将孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.返回所有界面和孔洞等分顶点的坐标数组.
+///
+*/
+///<summary>extractPoints</summary>
+///<param name ="divisions" type="int">根据divisions将所有界面和孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.</param>
+///<returns type="Vector3Array">返回所有界面和孔洞等分顶点的坐标数组.</returns>
+// 等分所有界面和孔洞,获得的顶点
 THREE.Shape.prototype.extractPoints = function ( divisions ) {
 
 	if (this.useSpacedPoints) {
@@ -104,8 +181,15 @@ THREE.Shape.prototype.extractPoints = function ( divisions ) {
 //
 // };
 
+/*
+///extractAllSpacedPoints方法根据divisions将孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.返回所有界面和孔洞等分顶点的坐标数组.
+///定距等分孔洞
+*/
+///<summary>extractAllSpacedPoints</summary>
+///<param name ="divisions" type="int">根据divisions将所有界面和孔洞等分,获得在所有界面和孔洞对象上等分点的点序列.如果没有设置参数divisions.</param>
+///<returns type="Object">返回所有界面和孔洞等分顶点的坐标数组.</returns>
 // Get points of shape and holes (spaced by regular distance)
-
+// 定距等分,获得所有界面和孔洞的顶点.
 THREE.Shape.prototype.extractAllSpacedPoints = function ( divisions ) {
 
 	return {
@@ -118,7 +202,7 @@ THREE.Shape.prototype.extractAllSpacedPoints = function ( divisions ) {
 };
 
 /**************************************************************
- *	Utils
+ *	Utils shape对象的工具集
  **************************************************************/
 
 THREE.Shape.Utils = {
@@ -500,7 +584,12 @@ THREE.Shape.Utils = {
 		return triangles.concat();
 
 	},
-
+	/*
+	///isClockWise方法判断顶点坐标数组的顺序是否是顺时针.
+	*/
+	///<summary>isClockWise</summary>
+	///<param name ="pts" type="PointArray">顶点坐标数组</param>
+	///<returns type="boolean">返回true 或者 false.</returns>
 	isClockWise: function ( pts ) {
 
 		return THREE.FontUtils.Triangulate.area( pts ) < 0;
@@ -511,6 +600,7 @@ THREE.Shape.Utils = {
 	// http://en.wikipedia.org/wiki/B%C3%A9zier_curve
 
 	// Quad Bezier Functions
+	// 二次贝塞尔方程.
 
 	b2p0: function ( t, p ) {
 
@@ -538,6 +628,7 @@ THREE.Shape.Utils = {
 	},
 
 	// Cubic Bezier Functions
+	// 三次贝塞尔取信方程.
 
 	b3p0: function ( t, p ) {
 
