@@ -10,11 +10,16 @@
 /**************************************************************
  *	曲线路径 - 数组内的曲线对象互相连接的曲线路经,可以使用曲线对象的方法,
  **************************************************************/
-
+/*
+///CurvePath对象曲线路径抽象基类,定义了曲线路经的一些方法,继承自THREE.Curve对象.
+/// TODO: THREE.CurvePath对象官方没有文档,里面有几个方法还不是很明确.
+///
+*/
+///<summary>CurvePath</summary>
 THREE.CurvePath = function () {
 
 	this.curves = [];		//曲线对象存放的数组
-	this.bends = [];		//
+	this.bends = [];		//弯曲对象存放的数组
 	
 	this.autoClose = false; // Automatically closes the path
 							//自动闭合路径,默认初始化为false.
@@ -179,8 +184,13 @@ THREE.CurvePath.prototype.getCurveLengths = function() {
 };
 
 
-
+/*
+///getBoundingBox遍历所有的顶点数据,获得曲线路经的立方体界限,用坐标的最小最大值表示.
+*/
+///<summary>getBoundingBox</summary>
+///<returns type="floatArray">获得曲线路经的立方体界限,用坐标的最小最大值表示.</returns>
 // Returns min and max coordinates
+// 返回最小最大的坐标值.
 
 THREE.CurvePath.prototype.getBoundingBox = function () {
 
@@ -198,7 +208,7 @@ THREE.CurvePath.prototype.getBoundingBox = function () {
 
 	sum = v3 ? new THREE.Vector3() : new THREE.Vector2();
 
-	for ( i = 0, il = points.length; i < il; i ++ ) {
+	for ( i = 0, il = points.length; i < il; i ++ ) {	//遍历所有的顶点数据
 
 		p = points[ i ];
 
@@ -235,32 +245,52 @@ THREE.CurvePath.prototype.getBoundingBox = function () {
 
 	}
 
-	return ret;
+	return ret;	//返回坐标最小最大值
 
 };
 
 /**************************************************************
- *	Create Geometries Helpers
+ *	Create Geometries Helpers 创建几何助手
  **************************************************************/
-
+/*
+///createPointsGeometry根据参数divisions(参数divisions在这里是将曲线路经分成几段)等分曲线路经,沿路径创建几何体
+*/
+///<summary>createPointsGeometry</summary>
+///<param name ="divisions" type="int">参数divisions在这里是将曲线路经分成几段.</param>
+///<returns type="geometryArray">返回几何体数组.</returns>
 /// Generate geometry from path points (for Line or Points objects)
+// 从路径顶点数据创建线或者点的几何体
 
 THREE.CurvePath.prototype.createPointsGeometry = function( divisions ) {
 
-	var pts = this.getPoints( divisions, true );
-	return this.createGeometry( pts );
+	var pts = this.getPoints( divisions, true );	//定量等分路径
+	return this.createGeometry( pts );	//调用cretateGeometry()方法,创建几何体对象数组
 
 };
 
+/*
+///createPointsGeometry根据参数divisions(参数divisions在这里是距离,按照距离将曲线等分)等分曲线路经,沿路径创建几何体
+*/
+///<summary>createSpacedPointsGeometry</summary>
+///<param name ="divisions" type="float">参数divisions在这里是距离,按照距离将曲线等分.</param>
+///<returns type="geometryArray">返回几何体数组.</returns>
+/// Generate geometry from path points (for Line or Points objects)
+// 从路径顶点数据创建线或者点的几何体
 // Generate geometry from equidistance sampling along the path
+// 沿路径生成等距的几何体的节点标记.
 
 THREE.CurvePath.prototype.createSpacedPointsGeometry = function( divisions ) {
 
-	var pts = this.getSpacedPoints( divisions, true );
-	return this.createGeometry( pts );
+	var pts = this.getSpacedPoints( divisions, true );	//定距等分路径
+	return this.createGeometry( pts );	//调用cretateGeometry()方法,创建几何体对象数组
 
 };
-
+/*
+///createGeometry根据参数定点数组,创建几何体
+*/
+///<summary>createGeometry</summary>
+///<param name ="points" type="Vector3Array">顶点数据数组.</param>
+///<returns type="geometryArray">返回几何体数组.</returns>
 THREE.CurvePath.prototype.createGeometry = function( points ) {
 
 	var geometry = new THREE.Geometry();
@@ -271,7 +301,7 @@ THREE.CurvePath.prototype.createGeometry = function( points ) {
 
 	}
 
-	return geometry;
+	return geometry;	//返回几何体数组
 
 };
 
@@ -281,16 +311,28 @@ THREE.CurvePath.prototype.createGeometry = function( points ) {
  **************************************************************/
 
 // Wrap path / Bend modifiers?
-
+/*
+///addWrapPath用来添加弯曲对象到bends数组中.
+///TODO: 这里我也没有弄太清楚,看代码应该是获得围绕曲线路经的弯曲对象.
+*/
+///<summary>addWrapPath</summary>
+///<param name ="bendpath" type="THREE.Curve">弯曲对象</param>
 THREE.CurvePath.prototype.addWrapPath = function ( bendpath ) {
 
-	this.bends.push( bendpath );
+	this.bends.push( bendpath );	//添加弯曲对象到弯曲数组
 
 };
 
+/*
+///getTransformedPoints用来根据参数bends定量等分当前曲线路经,并且获得围绕参数segments的路径.
+*/
+///<summary>getTransformedPoints</summary>
+///<param name ="segments" type="THREE.Curve">线段</param>
+///<param name ="bends" type="intArray">弯曲对象数组(定量等分的数量)</param>
+///<returns type="geometryArray">返回围绕参数segments的路径.</returns>
 THREE.CurvePath.prototype.getTransformedPoints = function( segments, bends ) {
 
-	var oldPts = this.getPoints( segments ); // getPoints getSpacedPoints
+	var oldPts = this.getPoints( segments ); // getPoints getSpacedPoints // 定量等分路径.
 	var i, il;
 
 	if ( ! bends ) {
@@ -301,7 +343,7 @@ THREE.CurvePath.prototype.getTransformedPoints = function( segments, bends ) {
 
 	for ( i = 0, il = bends.length; i < il; i ++ ) {
 
-		oldPts = this.getWrapPoints( oldPts, bends[ i ] );
+		oldPts = this.getWrapPoints( oldPts, bends[ i ] );	//
 
 	}
 
@@ -309,9 +351,16 @@ THREE.CurvePath.prototype.getTransformedPoints = function( segments, bends ) {
 
 };
 
+/*
+///getTransformedPoints用来根据参数bends定距等分当前曲线路经,并且获得围绕参数segments的路径.
+*/
+///<summary>getTransformedPoints</summary>
+///<param name ="segments" type="THREE.Curve">线段</param>
+///<param name ="bends" type="floatArray">弯曲对象数组(定距等分的距离)</param>
+///<returns type="geometryArray">返回围绕参数segments的路径.</returns>
 THREE.CurvePath.prototype.getTransformedSpacedPoints = function( segments, bends ) {
 
-	var oldPts = this.getSpacedPoints( segments );
+	var oldPts = this.getSpacedPoints( segments );	//定居等分路径
 
 	var i, il;
 
@@ -331,7 +380,17 @@ THREE.CurvePath.prototype.getTransformedSpacedPoints = function( segments, bends
 
 };
 
+
+/*
+///getWrapPoints根据oldPts当前线段,和参数path围绕的路径,获得围绕oldPts的顶点.
+*/
+///<summary>getTransformedPoints</summary>
+///<param name ="segments" type="THREE.Curve">线段</param>
+///<param name ="bends" type="THREE.Curve">弯曲对象</param>
+///<returns type="geometryArray">返回几何体数组.</returns>
+
 // This returns getPoints() bend/wrapped around the contour of a path.
+// 获得围绕当前路径的轮廓线.
 // Read http://www.planetclegg.com/projects/WarpingTextToSplines.html
 
 THREE.CurvePath.prototype.getWrapPoints = function ( oldPts, path ) {
@@ -350,14 +409,16 @@ THREE.CurvePath.prototype.getWrapPoints = function ( oldPts, path ) {
 		xNorm = oldX / bounds.maxX;
 
 		// If using actual distance, for length > path, requires line extrusions
+		// 如果使用实际距离,需要拉伸线.
 		//xNorm = path.getUtoTmapping(xNorm, oldX); // 3 styles. 1) wrap stretched. 2) wrap stretch by arc length 3) warp by actual distance
+		// 有三种样式,1.根据拉伸,围绕当前路径 2. 根据圆弧长度,围绕当前路径, 3. 根据实际距离,围绕当前路径.
 
 		xNorm = path.getUtoTmapping( xNorm, oldX );
 
 		// check for out of bounds?
 
-		var pathPt = path.getPoint( xNorm );
-		var normal = path.getTangent( xNorm );
+		var pathPt = path.getPoint( xNorm );	
+		var normal = path.getTangent( xNorm );		//获得切线
 		normal.set( - normal.y, normal.x ).multiplyScalar( oldY );
 
 		p.x = pathPt.x + normal.x;
@@ -365,7 +426,7 @@ THREE.CurvePath.prototype.getWrapPoints = function ( oldPts, path ) {
 
 	}
 
-	return oldPts;
+	return oldPts;	//TODO: 返回p吧,这里应该是返回p
 
 };
 

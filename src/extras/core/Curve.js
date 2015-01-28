@@ -45,8 +45,6 @@
 /// NOTE:关于三次样条插值,参考百度百科http://baike.baidu.com/view/2326225.htm?fr=aladdin
 /// NOTE:关于更多样条曲线插值,参考维基百科http://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A
 /// NOTE:关于样条曲线,参考维基百科http://zh.wikipedia.org/wiki/%E6%A0%B7%E6%9D%A1%E5%87%BD%E6%95%B0
-///
-///
 */
 ///<summary>Curve</summary>
 THREE.Curve = function () {
@@ -77,9 +75,10 @@ THREE.Curve.prototype.getPoint = function ( t ) {
 
 /*
 ///getPointAt方法获得一个点u在曲线上的相对位置,用弧长表示.
+///定距等分曲线
 */
 ///<summary>getPointAt</summary>
-///<param name ="t" type="float">u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<param name ="u" type="float">u表示距离,通过调用getUtoTmapping方法,换算成t.</param>
 ///<returns type="float">返回点u在曲线上的相对位置,用弧长表示.</returns>
 
 // Get point at relative position in curve according to arc length
@@ -95,6 +94,7 @@ THREE.Curve.prototype.getPointAt = function ( u ) {
 
 /*
 ///getPoints方法根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.返回对应等分线段顶点的坐标数组.
+///定量等分曲线
 */
 ///<summary>getPoints</summary>
 ///<param name ="divisions" type="int">根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.</param>
@@ -122,8 +122,8 @@ THREE.Curve.prototype.getPoints = function ( divisions ) {
 ///getSpacedPoints方法根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.
 */
 ///<summary>getPointAt</summary>
-///<param name ="t" type="float">u的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
-///<returns type="float">返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.</returns>
+///<param name ="divisions" type="int">根据divisions将曲线等分,获得在曲线对象上等分点的点序列.如果没有设置参数divisions,默认初始化为5等分.</param>
+///<returns type="Vector3Array">返回对应等分线段端点在曲线上的相对位置数组,用弧长表示.</returns>
 // Get sequence of points using getPointAt( u )
 // 获得一系列顶点的相对位置的数组.调用getPointAt方法.
 THREE.Curve.prototype.getSpacedPoints = function ( divisions ) {
