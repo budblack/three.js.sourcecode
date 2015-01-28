@@ -7,69 +7,101 @@
  *	Curved Path - a curve path is simply a array of connected
  *  curves, but retains the api of a curve
  **************************************************************/
+/**************************************************************
+ *	曲线路径 - 数组内的曲线对象互相连接的曲线路经,可以使用曲线对象的方法,
+ **************************************************************/
 
 THREE.CurvePath = function () {
 
-	this.curves = [];
-	this.bends = [];
+	this.curves = [];		//曲线对象存放的数组
+	this.bends = [];		//
 	
 	this.autoClose = false; // Automatically closes the path
+							//自动闭合路径,默认初始化为false.
 };
-
+/******************************************************************************************
+****下面是CurvePath对象的方法属性定义,继承自THREE.Curve对象.其他方法同伙定义原型的方式创建.
+*******************************************************************************************/
 THREE.CurvePath.prototype = Object.create( THREE.Curve.prototype );
-
+/*
+///add用来添加曲线对象到curves数组中.
+*/
+///<summary>add</summary>
+///<param name ="curve" type="THREE.Curve">曲线对象</param>
 THREE.CurvePath.prototype.add = function ( curve ) {
 
-	this.curves.push( curve );
+	this.curves.push( curve );	//将曲线添加到数组中.
 
 };
-
+/*
+///checkConnection用来检查结束点没有和起始点或下一条曲线连接,将不能作为路径
+*/
+///<summary>checkConnection</summary>
 THREE.CurvePath.prototype.checkConnection = function() {
 	// TODO
 	// If the ending of curve is not connected to the starting
 	// or the next curve, then, this is not a real path
-};
+	// 如果结束点没有和起始点或下一条曲线连接,将不能作为路径.
 
+};
+/*
+///closePath闭合路经,将曲线路经起始点和结束点闭合
+*/
+///<summary>closePath</summary>
 THREE.CurvePath.prototype.closePath = function() {
 	// TODO Test
 	// and verify for vector3 (needs to implement equals)
 	// Add a line curve if start and end of lines are not connected
+	// 测试和判断起始点和结束点是否相等,如果不相等,以当前起始点和结束点创建一条曲线,添加到曲线数组中.
 	var startPoint = this.curves[0].getPoint(0);
 	var endPoint = this.curves[this.curves.length-1].getPoint(1);
 	
-	if (! startPoint.equals(endPoint)) {
-		this.curves.push( new THREE.LineCurve(endPoint, startPoint) );
+	if (! startPoint.equals(endPoint)) {		//测试和判断起始点和结束点是否相等,如果不相等,
+		this.curves.push( new THREE.LineCurve(endPoint, startPoint) );		//以当前起始点和结束点创建一条曲线,添加到曲线数组中
 	}
 	
 };
 
+/*
+///getPoint方法返回在curvePath对象上t点(取值范围0.0-1.0之间)的矢量.
+*/
+///<summary>getPoint</summary>
+///<param name ="t" type="float">t的取值范围是0.0 - 1.0,将曲线作为一个整体,一个点在这个整体的位置.</param>
+///<returns type="null">返回t点的具体坐标.</returns>
+
 // To get accurate point with reference to
 // entire path distance at time t,
 // following has to be done:
+// 根据参数t,获得相对于整个路经长度上t的点.
 
 // 1. Length of each sub path have to be known
+// 1. 先计算出每条子路径的长度.
 // 2. Locate and identify type of curve
+// 2. 定位和识别曲线类型
 // 3. Get t for the curve
+// 3. 获得相对于整个路经长度上t的点
 // 4. Return curve.getPointAt(t')
+// 4. 调用getPointAt方法,返回t位置上的点.
 
 THREE.CurvePath.prototype.getPoint = function( t ) {
 
-	var d = t * this.getLength();
-	var curveLengths = this.getCurveLengths();
+	var d = t * this.getLength();	//计算t值占整条路经长度的比例.
+	var curveLengths = this.getCurveLengths();	//计算整条曲线路经的长度
 	var i = 0, diff, curve;
 
 	// To think about boundaries points.
+	// 考虑边界点
 
-	while ( i < curveLengths.length ) {
+	while ( i < curveLengths.length ) {	
 
-		if ( curveLengths[ i ] >= d ) {
+		if ( curveLengths[ i ] >= d ) {	//定位识别t位于整条路经的位置.
 
 			diff = curveLengths[ i ] - d;
 			curve = this.curves[ i ];
 
-			var u = 1 - diff / curve.getLength();
+			var u = 1 - diff / curve.getLength();	
 
-			return curve.getPointAt( u );
+			return curve.getPointAt( u );	//调用getPointAt方法
 
 			break;
 		}
@@ -88,11 +120,16 @@ THREE.CurvePath.prototype.getPoint = function( t ) {
 THREE.CurvePath.prototype.getTangent = function( t ) {
 };*/
 
-
+/*
+///getLength将子曲线的长度的和放入缓存数组.返回曲线路经总长度
+*/
+///<summary>getLength</summary>
+///<returns type="float">返回曲线路经总长度.</returns>
 // We cannot use the default THREE.Curve getPoint() with getLength() because in
 // THREE.Curve, getLength() depends on getPoint() but in THREE.CurvePath
 // getPoint() depends on getLength
-
+// 我们在getLength()中不能使用默认的getPoint()方法,因为在THREE.Curve中getLength()方法
+// 依赖getPoint()方法,但是在THREE.CurvePath中getPoint()方法依赖getLength()方法.
 THREE.CurvePath.prototype.getLength = function() {
 
 	var lens = this.getCurveLengths();
@@ -100,21 +137,30 @@ THREE.CurvePath.prototype.getLength = function() {
 
 };
 
+/*
+///getCurveLengths将子曲线的长度的和放入缓存数组.返回长度数组
+*/
+///<summary>getCurveLengths</summary>
+///<returns type="floatArray">返回长度数组.</returns>
 // Compute lengths and cache them
+// 计算路径中曲线的长度,并存储
 // We cannot overwrite getLengths() because UtoT mapping uses it.
-
+// 我们不能重写getLengths()方法,因为u到t映射使用它.
 THREE.CurvePath.prototype.getCurveLengths = function() {
 
 	// We use cache values if curves and cache array are same length
+	// 如果缓存长度数组的数量和曲线数量一致,并且缓存长度已经定义,使用缓存长度.
 
 	if ( this.cacheLengths && this.cacheLengths.length == this.curves.length ) {
 
-		return this.cacheLengths;
+		return this.cacheLengths;	//使用缓存长度
 
 	};
 
 	// Get length of subsurve
+	// 获取子曲线的长度
 	// Push sums into cached array
+	// 将子曲线的长度的和放入缓存数组.
 
 	var lengths = [], sums = 0;
 	var i, il = this.curves.length;
@@ -128,7 +174,7 @@ THREE.CurvePath.prototype.getCurveLengths = function() {
 
 	this.cacheLengths = lengths;
 
-	return lengths;
+	return lengths;		//返回长度数组.
 
 };
 

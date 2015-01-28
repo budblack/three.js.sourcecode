@@ -142,6 +142,12 @@ THREE.Curve.prototype.getSpacedPoints = function ( divisions ) {
 
 };
 
+/*
+///getLength将子曲线的长度的和放入缓存数组.返回曲线路经总长度
+*/
+///<summary>getLength</summary>
+///<returns type="float">返回曲线路经总长度.</returns>
+
 // Get total curve arc length
 //获得曲线总的弧长
 
@@ -152,9 +158,14 @@ THREE.Curve.prototype.getLength = function () {
 
 };
 
+/*
+///getLengths将子曲线的长度的和放入缓存数组.返回长度数组
+*/
+///<summary>getLengths</summary>
+///<returns type="floatArray">返回长度数组.</returns>
+
 // Get list of cumulative segment lengths
 // 获得个线段的长度的列表
-
 THREE.Curve.prototype.getLengths = function ( divisions ) {
 
 	if ( ! divisions ) divisions = (this.__arcLengthDivisions) ? (this.__arcLengthDivisions): 200;
@@ -191,6 +202,11 @@ THREE.Curve.prototype.getLengths = function ( divisions ) {
 
 };
 
+/*
+///updateArcLengths调用getLengths方法,更新长度数组.
+*/
+///<summary>updateArcLengths</summary>
+///<returns type="floatArray">返回长度数组.</returns>
 
 THREE.Curve.prototype.updateArcLengths = function() {
 	this.needsUpdate = true;
