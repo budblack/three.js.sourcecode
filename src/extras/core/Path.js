@@ -539,26 +539,38 @@ THREE.Path.prototype.getPoints = function( divisions, closedPath ) {
 };
 
 //
-// Breaks path into shapes
+// Breaks path into shapes 
 //
 //	Assumptions (if parameter isCCW==true the opposite holds):
 //	- solid shapes are defined clockwise (CW)
+//  - 实体图形对象顶点顺序被定义为顺时针方向
 //	- holes are defined counterclockwise (CCW)
+//  - 掏空的孔洞对象的顶点顺序被定义为逆时针
 //
 //	If parameter noHoles==true:
-//  - all subPaths are regarded as solid shapes
-//  - definition order CW/CCW has no relevance
+//  - all subPaths are regarded as solid shapes 所有的子路径为实体图形
+//  - definition order CW/CCW has no relevance	定义的顺时针,逆时针都没有作用.
 //
-
+/*
+///toShapes方法将存储在路境内的动作和顶点按照指定的顶点顺序(isCCW,)和是否包含空洞(noHoles),创建实体对象.
+*/
+///<summary>toShapes</summary>
+///<param name ="isCCW" type="boolean">图形顶点顺序是否是你时针方向</param>
+///<param name ="noHoles" type="boolean">图形顶点顺序不管是不是逆时针,都不能生成空洞.</param>
 THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
-
+	/*
+	///extractSubpaths方法将参数inActions压入subPaths,并将subPaths返回,从函数代码逻辑可以看出将参数inActions作为子路径返回.
+	*/
+	///<summary>extractSubpaths</summary>
+	///<param name ="inActions" type="ObjectArray">包含图形动作和坐标的数组</param>
+	///<returns type="ObjectArray">返回子路径.</returns>
 	function extractSubpaths( inActions ) {
 
 		var i, il, item, action, args;
 
 		var subPaths = [], lastPath = new THREE.Path();
 
-		for ( i = 0, il = inActions.length; i < il; i ++ ) {
+		for ( i = 0, il = inActions.length; i < il; i ++ ) {	//遍历inActions数组
 
 			item = inActions[ i ];
 
@@ -590,7 +602,12 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 
 		return	subPaths;
 	}
-
+	/*
+	///toShapesNoHoles方法将参数inSubpaths压入shapes,并将shapes返回,从函数名称中可以看出将子路径生成为实体图形,而非孔洞.
+	*/
+	///<summary>toShapesNoHoles</summary>
+	///<param name ="inSubpaths" type="ObjectArray">包含图形动作和坐标的数组</param>
+	///<returns type="ObjectArray">返回实体图形动作和坐标组成的数组.</returns>
 	function toShapesNoHoles( inSubpaths ) {
 
 		var shapes = [];
@@ -610,7 +627,13 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 
 		return shapes;
 	};
-
+	/*
+	///isPointInsidePolygon方法从函数名称中可以看出,实在判断参数inPt(vector2),是否在多边形内部(参数inPolygon,vector2Array)
+	*/
+	///<summary>isPointInsidePolygon</summary>
+	///<param name ="inPt" type="ObjectArray">要判断的顶点坐标</param>
+	///<param name ="inPolygon" type="vector2Array">要判断的多边形坐标数组</param>
+	///<returns type="inPolygon">返回实体图形动作和坐标组成的数组.</returns>
 	function isPointInsidePolygon( inPt, inPolygon ) {
 		var EPSILON = 0.0000000001;
 
@@ -620,6 +643,9 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 		// toggling of inside/outside at every single! intersection point of an edge
 		//  with the horizontal line through inPt, left of inPt
 		//  not counting lowerY endpoints of edges and whole edges on that line
+		// inPt 在多边形外轮廓线上 => 立即成功 或者 inPt 位于多边形轮廓线外部或者内部, 
+		// 通过判断水平通过inPt的直线与多边形是否交点,遍历多边形的所有边的y方向的最小
+		// 值不在在水平通过inPt的直线上,说明不相交
 		var inside = false;
 		for( var p = polyLen - 1, q = 0; q < polyLen; p = q ++ ) {
 			var edgeLowPt  = inPolygon[ p ];
@@ -628,7 +654,7 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 			var edgeDx = edgeHighPt.x - edgeLowPt.x;
 			var edgeDy = edgeHighPt.y - edgeLowPt.y;
 
-			if ( Math.abs(edgeDy) > EPSILON ) {			// not parallel
+			if ( Math.abs(edgeDy) > EPSILON ) {			// not parallel 不平行
 				if ( edgeDy < 0 ) {
 					edgeLowPt  = inPolygon[ q ]; edgeDx = - edgeDx;
 					edgeHighPt = inPolygon[ p ]; edgeDy = - edgeDy;
@@ -644,11 +670,11 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 					if ( perpEdge < 0 ) 				continue;
 					inside = ! inside;		// true intersection left of inPt
 				}
-			} else {		// parallel or colinear
-				if ( inPt.y != edgeLowPt.y ) 		continue;			// parallel
+			} else {		// parallel or colinear 平行于
+				if ( inPt.y != edgeLowPt.y ) 		continue;			// parallel 平行
 				// egde lies on the same horizontal line as inPt
 				if ( ( ( edgeHighPt.x <= inPt.x ) && ( inPt.x <= edgeLowPt.x ) ) ||
-					 ( ( edgeLowPt.x <= inPt.x ) && ( inPt.x <= edgeHighPt.x ) ) )		return	true;	// inPt: Point on contour !
+					 ( ( edgeLowPt.x <= inPt.x ) && ( inPt.x <= edgeHighPt.x ) ) )		return	true;	// inPt: Point on contour ! 点
 				// continue;
 			}
 		}
@@ -657,10 +683,10 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 	}
 
 
-	var subPaths = extractSubpaths( this.actions );
+	var subPaths = extractSubpaths( this.actions );	//将路径数组中左右的子路径导出.
 	if ( subPaths.length == 0 ) return [];
 
-	if ( noHoles === true )	return	toShapesNoHoles( subPaths );
+	if ( noHoles === true )	return	toShapesNoHoles( subPaths );	//如果参数noHole为true,调用toShapesNoHoles方法,将子路径转换成实体图形的动作坐标数组,并返回.
 
 
 	var solid, tmpPath, tmpShape, shapes = [];
@@ -676,7 +702,7 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 
 	}
 
-	var holesFirst = ! THREE.Shape.Utils.isClockWise( subPaths[ 0 ].getPoints() );
+	var holesFirst = ! THREE.Shape.Utils.isClockWise( subPaths[ 0 ].getPoints() ); //调用isClockWise方法判断,子路径数组中的第一条子路径动作和坐标数组是否是顺时针顺序.
 	holesFirst = isCCW ? ! holesFirst : holesFirst;
 
 	// console.log("Holes first", holesFirst);
@@ -696,25 +722,25 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 
 		tmpPath = subPaths[ i ];
 		tmpPoints = tmpPath.getPoints();
-		solid = THREE.Shape.Utils.isClockWise( tmpPoints );
+		solid = THREE.Shape.Utils.isClockWise( tmpPoints ); //调用isClockWise方法判断,子路径中的动作和坐标数组是否是顺时针顺序.
 		solid = isCCW ? ! solid : solid;
 
-		if ( solid ) {
+		if ( solid ) {	//如果子路径中的动作和坐标数组是顺时针方向
 
-			if ( (! holesFirst ) && ( newShapes[mainIdx] ) )	mainIdx ++;
+			if ( (! holesFirst ) && ( newShapes[mainIdx] ) )	mainIdx ++;	//如果第一条子路径不是顺时针,并且newShapes[mainIdx]不为false,
 
-			newShapes[mainIdx] = { s: new THREE.Shape(), p: tmpPoints };
+			newShapes[mainIdx] = { s: new THREE.Shape(), p: tmpPoints };	//创建shape对象
 			newShapes[mainIdx].s.actions = tmpPath.actions;
 			newShapes[mainIdx].s.curves = tmpPath.curves;
 			
-			if ( holesFirst )	mainIdx ++;
-			newShapeHoles[mainIdx] = [];
+			if ( holesFirst )	mainIdx ++;	//如果第一吊子路径为顺时针
+			newShapeHoles[mainIdx] = [];	//
 
 			//console.log('cw', i);
 
-		} else {
+		} else {	//如果子路径中的动作和坐标数组是逆时针方向
 
-			newShapeHoles[mainIdx].push( { h: tmpPath, p: tmpPoints[0] } );
+			newShapeHoles[mainIdx].push( { h: tmpPath, p: tmpPoints[0] } ); //创建hole
 
 			//console.log('ccw', i);
 
@@ -723,8 +749,8 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 	}
 
 	// only Holes? -> probably all Shapes with wrong orientation
-	if ( ! newShapes[0] )	return	toShapesNoHoles( subPaths );
-
+	// 只有孔洞 -> 可能所有的图形的方向都是错误的.
+	if ( ! newShapes[0] )	return	toShapesNoHoles( subPaths );	//转换所有的方向
 
 	if ( newShapes.length > 1 ) {
 		var ambigious = false;
@@ -772,6 +798,6 @@ THREE.Path.prototype.toShapes = function( isCCW, noHoles ) {
 
 	//console.log("shape", shapes);
 
-	return shapes;
+	return shapes;	//返回创建的实体图形.
 
 };
