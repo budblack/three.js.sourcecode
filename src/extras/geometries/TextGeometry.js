@@ -36,7 +36,7 @@
 */
 
 /*
-///TextGeometry用来生成文字
+///TextGeometry用来生成文字,不过要生成中文3d文字,需要将中文字体利用typeface.js将字体转换成js格式的形文件.
 */
 ///<summary>TextGeometry</summary>
 ///<param name ="text" type="string">文字内容</param>

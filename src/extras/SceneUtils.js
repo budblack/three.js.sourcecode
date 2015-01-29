@@ -24,7 +24,7 @@ THREE.SceneUtils = {
 
 		}
 
-		return group;
+		return group;	//返回Object3D对象
 
 	},
 	/*

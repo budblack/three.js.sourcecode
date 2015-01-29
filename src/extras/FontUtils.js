@@ -62,12 +62,31 @@ THREE.FontUtils = {
 		};
 
 	},
-
+	/*
+	///loadFace方法的具体实现,读取字体文件内的字符的比划图形路径数据.
+	///****************************typeface_js文件格式,下面是一个字符"o",有兴趣的朋友可以看看形字体的规范.*************************************************
+	///	if (_typeface_js && _typeface_js.loadFace) _typeface_js.loadFace(
+	///			{"glyphs":
+	///				{"ο":
+	///					{"x_min":30,
+	///					"x_max":741,
+	///					"ha":774,
+	///					"o":"m 395 683 q 645 587 550 683 q 741 337 741 492 q 646 79 741 173 q 385 -15 552 -15 q 127 78 225 -15 q 30 333 30 172 q 129 590 30 498 q 395 683 228 683 m 269 174 q 305 85 275 119 q 386 52 335 52 q 464 85 436 52 q 503 172 491 119 q 510 237 506 194 q 515 336 515 279 q 510 431 515 391 q 503 494 506 472 q 464 581 491 548 q 385 615 436 615 q 291 563 315 615 q 261 459 267 512 q 256 333 256 407 q 269 174 256 248 "
+	///					}
+	///				}
+	///			}
+	///		}
+	///	)
+	///****************************************************************************************************************************************************
+	*/
+	///<summary>loadFace</summary>
+	///<param name ="data" type="Object">字体形数据.</param>
+	///<returns type="Object3d">返回Object3D对象</returns>	
 	loadFace: function ( data ) {
 
-		var family = data.familyName.toLowerCase();
+		var family = data.familyName.toLowerCase();	//字体族名字转换成小写
 
-		var ThreeFont = this;
+		var ThreeFont = this; 
 
 		ThreeFont.faces[ family ] = ThreeFont.faces[ family ] || {};
 
@@ -76,10 +95,15 @@ THREE.FontUtils = {
 
 		var face = ThreeFont.faces[ family ][ data.cssFontWeight ][ data.cssFontStyle ] = data;
 
-		return data;
+		return data; //返回字体文件内的字符的比划图形路径数据.
 
 	},
-
+	/*
+	///drawText方法的具体实现,从读取的字体数据中,按照文字内容中的每个字符,获得字符的比划路径
+	*/
+	///<summary>loadFace</summary>
+	///<param name ="text" type="String">文字内容.</param>
+	///<returns type="Object3d">返回字符的比划图形路径</returns>	
 	drawText: function ( text ) {
 
 		var characterPts = [], allPts = [];
@@ -87,19 +111,19 @@ THREE.FontUtils = {
 		// RenderText
 
 		var i, p,
-			face = this.getFace(),
-			scale = this.size / face.resolution,
-			offset = 0,
-			chars = String( text ).split( '' ),
+			face = this.getFace(),	//字体文件内的字符的比划图形路径数据.
+			scale = this.size / face.resolution, 	//字体缩放
+			offset = 0,	//字符间距
+			chars = String( text ).split( '' ), 	//分割字符串
 			length = chars.length;
 
-		var fontPaths = [];
+		var fontPaths = [];	 	//字体路径顶点数据数组.
 
-		for ( i = 0; i < length; i ++ ) {
+		for ( i = 0; i < length; i ++ ) {	//遍历所有的字符
 
 			var path = new THREE.Path();
 
-			var ret = this.extractGlyphPoints( chars[ i ], face, scale, offset, path );
+			var ret = this.extractGlyphPoints( chars[ i ], face, scale, offset, path );	//调用extractGlyphPoints方法,解析字符路径.
 			offset += ret.offset;
 
 			fontPaths.push( ret.path );
@@ -108,7 +132,7 @@ THREE.FontUtils = {
 
 		// get the width
 
-		var width = offset / 2;
+		var width = offset / 2; 	//字宽,字体笔划的宽度
 		//
 		// for ( p = 0; p < allPts.length; p++ ) {
 		//
@@ -122,11 +146,34 @@ THREE.FontUtils = {
 		//extract.paths = fontPaths;
 		//extract.offset = width;
 
-		return { paths: fontPaths, offset: width };
+		return { paths: fontPaths, offset: width }; //返回特定格式的对象.
 
 	},
 
-
+	/*
+	///extractGlyphPoints方法解析字符路径.返回特定格式的字符路径对象
+	///****************************typeface_js文件格式,下面是一个字符"o",有兴趣的朋友可以看看形字体的规范.*************************************************
+	///	if (_typeface_js && _typeface_js.loadFace) _typeface_js.loadFace(
+	///			{"glyphs":
+	///				{"ο":
+	///					{"x_min":30,
+	///					"x_max":741,
+	///					"ha":774,
+	///					"o":"m 395 683 q 645 587 550 683 q 741 337 741 492 q 646 79 741 173 q 385 -15 552 -15 q 127 78 225 -15 q 30 333 30 172 q 129 590 30 498 q 395 683 228 683 m 269 174 q 305 85 275 119 q 386 52 335 52 q 464 85 436 52 q 503 172 491 119 q 510 237 506 194 q 515 336 515 279 q 510 431 515 391 q 503 494 506 472 q 464 581 491 548 q 385 615 436 615 q 291 563 315 615 q 261 459 267 512 q 256 333 256 407 q 269 174 256 248 "
+	///					}
+	///				}
+	///			}
+	///		}
+	///	)
+	///****************************************************************************************************************************************************
+	*/
+	///<summary>extractGlyphPoints</summary>
+	///<param name ="c" type="Char">字符.</param>
+	///<param name ="face" type="Object">字体文件内的字符的比划图形路径数据.</param>
+	///<param name ="scale" type="float">字体缩放.</param>
+	///<param name ="offset" type="float">字符间距.</param>
+	///<param name ="path" type="THREE.Path">文字的图形路径.</param>
+	///<returns type="Object3d">返回特定格式的字符路径对象</returns>	
 	extractGlyphPoints: function ( c, face, scale, offset, path ) {
 
 		var pts = [];
@@ -139,7 +186,7 @@ THREE.FontUtils = {
 			glyph = face.glyphs[ c ] || face.glyphs[ '?' ];
 
 		if ( ! glyph ) return;
-
+		//下边的代码,和THREE.Path里定义的动作定义的一样.结合字符的数据.这样笔划的图形路径就画出来了.
 		if ( glyph.o ) {
 
 			outline = glyph._cachedOutline || ( glyph._cachedOutline = glyph.o.split( ' ' ) );
@@ -243,46 +290,66 @@ THREE.FontUtils = {
 
 
 
-		return { offset: glyph.ha * scale, path:path };
+		return { offset: glyph.ha * scale, path:path };	//返回特定格式的字符路径轮廓图形对象
 	}
 
 };
 
-
+/*
+///generateShapes方法的根据文字内容(参数text),参数选项(参数parameters),生成文字路径轮廓图形数组.
+/// NOTE:参数parameters的格式如下,和材质的用法一致.
+/// parameters = {
+///  size: 			<float>, 	// size of the text 	字体的大小
+///  height: 		<float>, 	// thickness to extrude text 	3维字体的拉伸厚度,
+///  curveSegments: 	<int>,		// number of points on the curves  	拉伸厚度上的细分线段数.
+///
+///  font: 			<string>,		// font name 	//字体名称
+///  weight: 		<string>,		// font weight (normal, bold) //字体宽度
+///  style: 			<string>,		// font style  (normal, italics)  //字体样式
+///
+///  bevelEnabled:	<bool>,			// turn on bevel  是否启用字体倒角
+///  bevelThickness: <float>, 		// how deep into text bevel goes  //倒角的厚度
+///  bevelSize:		<float>, 		// how far from text outline is bevel  	//从截面外轮廓倒角的尺寸
+///  }
+*/
+///<summary>generateShapes</summary>
+///<param name ="text" type="String">文字内容.</param>
+///<param name ="parameters" type="Object">文字内容.</param>
+///<returns type="Object3d">返回文字路径轮廓图形数组</returns>	
 THREE.FontUtils.generateShapes = function ( text, parameters ) {
 
 	// Parameters 
 
-	parameters = parameters || {};
+	parameters = parameters || {}; //参数选项.
 
-	var size = parameters.size !== undefined ? parameters.size : 100;
-	var curveSegments = parameters.curveSegments !== undefined ? parameters.curveSegments : 4;
+	var size = parameters.size !== undefined ? parameters.size : 100;	//字体的大小,如果未定义初始化为100.
+	var curveSegments = parameters.curveSegments !== undefined ? parameters.curveSegments : 4;	//拉伸厚度上的细分线段数,如果未定义初始化为4
 
-	var font = parameters.font !== undefined ? parameters.font : 'helvetiker';
-	var weight = parameters.weight !== undefined ? parameters.weight : 'normal';
-	var style = parameters.style !== undefined ? parameters.style : 'normal';
+	var font = parameters.font !== undefined ? parameters.font : 'helvetiker';	//字体名称,如果未定义初始化为'helvetiker'
+	var weight = parameters.weight !== undefined ? parameters.weight : 'normal';	//字体宽度,如果未定义初始化为'normal'
+	var style = parameters.style !== undefined ? parameters.style : 'normal';	//字体样式,如果未定义初始化为'normal'
 
-	THREE.FontUtils.size = size;
-	THREE.FontUtils.divisions = curveSegments;
+	THREE.FontUtils.size = size;	//赋值字体的大小
+	THREE.FontUtils.divisions = curveSegments;	//赋值定距等分数量
 
-	THREE.FontUtils.face = font;
-	THREE.FontUtils.weight = weight;
-	THREE.FontUtils.style = style;
+	THREE.FontUtils.face = font;	//赋值字体名称
+	THREE.FontUtils.weight = weight;	//赋值字体宽度
+	THREE.FontUtils.style = style;	//赋值字体样式
 
 	// Get a Font data json object
 
-	var data = THREE.FontUtils.drawText( text );
+	var data = THREE.FontUtils.drawText( text );	//调用THREE.FontUtils.drawText()方法,返回字符的比划图形路径
 
-	var paths = data.paths;
+	var paths = data.paths;	
 	var shapes = [];
 
-	for ( var p = 0, pl = paths.length; p < pl; p ++ ) {
+	for ( var p = 0, pl = paths.length; p < pl; p ++ ) {	//遍历图形数组
 
-		Array.prototype.push.apply( shapes, paths[ p ].toShapes() );
+		Array.prototype.push.apply( shapes, paths[ p ].toShapes() );	//将图形复制到shapes数组内.
 
 	}
 
-	return shapes;
+	return shapes;	//返回文字路径轮廓图形数组
 
 };
 
@@ -307,7 +374,15 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 	var EPSILON = 0.0000000001;
 
 	// takes in an contour array and returns
-
+	//多边形三角化算法参考:
+	// http://en.wikipedia.org/wiki/Delaunay_triangulation
+	/*
+	///process方法将多边形三角化.特别详细的还是找本几何造型的书,自己看看吧.
+	*/
+	///<summary>process</summary>
+	///<param name ="contour" type="Vector2Array">二维向量数组.</param>
+	///<param name ="indices" type="Geometry">true 或者 false,一个布尔值，指示是否需要返回索引</param>
+	///<returns type="Number">返回三角形顶点数据</returns>	
 	var process = function ( contour, indices ) {
 
 		var n = contour.length;
@@ -319,6 +394,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 			vertIndices = [];
 
 		/* we want a counter-clockwise polygon in verts */
+		/* 我们想要顶点顺序顺时针的多边形*/
 
 		var u, v, w;
 
@@ -335,21 +411,23 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 		var nv = n;
 
 		/*  remove nv - 2 vertices, creating 1 triangle every time */
+		// 删除nv 2个顶点,每次创建一个三角形.
 
-		var count = 2 * nv;   /* error detection */
+		var count = 2 * nv;   /* error detection */	//错误检查
 
 		for ( v = nv - 1; nv > 2; ) {
 
 			/* if we loop, it is probably a non-simple polygon */
+			// 如果上面条件成立,这个图形将不是一个简化多边形.
 
-			if ( ( count -- ) <= 0 ) {
+			if ( ( count -- ) <= 0 ) { //如果数量小于等于0
 
-				//** Triangulate: ERROR - probable bad polygon!
+				//** Triangulate: ERROR - probable bad polygon! 错误的多边形对象
 
 				//throw ( "Warning, unable to triangulate polygon!" );
 				//return null;
 				// Sometimes warning is fine, especially polygons are triangulated in reverse.
-				console.log( 'Warning, unable to triangulate polygon!' );
+				console.log( 'Warning, unable to triangulate polygon!' ); //提示用户不能三角化多边形
 
 				if ( indices ) return vertIndices;
 				return result;
@@ -357,6 +435,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 			}
 
 			/* three consecutive vertices in current polygon, <u,v,w> */
+			// u,v,w 当前多边形的三个连续的顶点
 
 			u = v; 	 	if ( nv <= u ) u = 0;     /* previous */
 			v = u + 1;  if ( nv <= v ) v = 0;     /* new v    */
@@ -367,12 +446,13 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 				var a, b, c, s, t;
 
 				/* true names of the vertices */
-
+				// 指定顶点为三角形的顶点a,b,c
 				a = verts[ u ];
 				b = verts[ v ];
 				c = verts[ w ];
 
 				/* output Triangle */
+				//输出三角形
 
 				result.push( [ contour[ a ],
 					contour[ b ],
@@ -380,9 +460,10 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 
 
 				vertIndices.push( [ verts[ u ], verts[ v ], verts[ w ] ] );
+				//包含系列的三角形顶点数组
 
 				/* remove v from the remaining polygon */
-
+				//从剩余的多边形删除v
 				for ( s = v, t = v + 1; t < nv; s++, t++ ) {
 
 					verts[ s ] = verts[ t ];
@@ -392,6 +473,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 				nv --;
 
 				/* reset error detection counter */
+				//复位错误检测计数器
 
 				count = 2 * nv;
 
@@ -399,13 +481,19 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 
 		}
 
-		if ( indices ) return vertIndices;
+		if ( indices ) return vertIndices; 	//返回
 		return result;
 
 	};
 
+	/*
+	///area用来计算多边形轮廓的面积,经常用来判断顶点的排列顺序,是顺时针,还是逆时针,结果小于0,为顺时针,大于0,为逆时针.
+	*/
+	///<summary>area</summary>
+	///<param name ="contour" type="Vector2Array">多边形顶点数组</param>
+	///<returns type="float">返回多边形的面积</returns>	
 	// calculate area of the contour polygon
-
+	// 计算多边形轮廓的面积
 	var area = function ( contour ) {
 
 		var n = contour.length;
@@ -417,7 +505,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 
 		}
 
-		return a * 0.5;
+		return a * 0.5;	//返回多边形的面积.
 
 	};
 
@@ -436,7 +524,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 		cx = contour[ verts[ w ] ].x;
 		cy = contour[ verts[ w ] ].y;
 
-		if ( EPSILON > ( ( ( bx - ax ) * ( cy - ay ) ) - ( ( by - ay ) * ( cx - ax ) ) ) ) return false;
+		if ( EPSILON > ( ( ( bx - ax ) * ( cy - ay ) ) - ( ( by - ay ) * ( cx - ax ) ) ) ) return false; //如果底边乘以高
 
 		var aX, aY, bX, bY, cX, cY;
 		var apx, apy, bpx, bpy, cpx, cpy;
@@ -482,5 +570,6 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 } )( THREE.FontUtils );
 
 // To use the typeface.js face files, hook up the API
+// 使用typeface.js面文件，挂接API,
 self._typeface_js = { faces: THREE.FontUtils.faces, loadFace: THREE.FontUtils.loadFace };
 THREE.typeface_js = self._typeface_js;

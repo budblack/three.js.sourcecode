@@ -36,9 +36,9 @@ src
 ¦      
 --extras
 ¦  ¦  FontUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
-¦  ¦  GeometryUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
+¦  ¦  GeometryUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦  ImageUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦  ¦  SceneUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦  SceneUtils.js - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦  
 ¦  --animation
 ¦  ¦      Animation.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
@@ -82,7 +82,7 @@ src
 ¦  ¦      ShapeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
 ¦  ¦      SphereGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      TetrahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --  0%
-¦  ¦      TextGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      TextGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      TorusGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
 ¦  ¦      TorusKnotGeometry.js - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
 ¦  ¦      TubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
