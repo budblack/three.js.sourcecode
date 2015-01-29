@@ -8,32 +8,50 @@
  *
  * 	typeface.js and canvastext
  * 		For converting fonts and rendering with javascript
+ *		使用javascript渲染和转换字体通过typeface.js,访问下面网站.
  *		http://typeface.neocracy.org
  *
  *	Triangulation ported from AS3
  *		Simple Polygon Triangulation
+ * 		简单的多边形三角化
  *		http://actionsnippet.com/?p=1462
  *
  * 	A Method to triangulate shapes with holes
+ *	一个将带有孔洞(镂空,用这个词肯能更加的专业一些吧.)的图形三角化
  *		http://www.sakri.net/blog/2009/06/12/an-approach-to-triangulating-polygons-with-holes/
- *
  */
-
+/****************************typeface_js文件格式,下面是一个字符"o",有兴趣的朋友可以看看形字体的规范.*************************************************
+*	if (_typeface_js && _typeface_js.loadFace) _typeface_js.loadFace(
+*			{"glyphs":
+*				{"ο":
+*					{"x_min":30,
+*					"x_max":741,
+*					"ha":774,
+*					"o":"m 395 683 q 645 587 550 683 q 741 337 741 492 q 646 79 741 173 q 385 -15 552 -15 q 127 78 225 -15 q 30 333 30 172 q 129 590 30 498 q 395 683 228 683 m 269 174 q 305 85 275 119 q 386 52 335 52 q 464 85 436 52 q 503 172 491 119 q 510 237 506 194 q 515 336 515 279 q 510 431 515 391 q 503 494 506 472 q 464 581 491 548 q 385 615 436 615 q 291 563 315 615 q 261 459 267 512 q 256 333 256 407 q 269 174 256 248 "
+*					}
+*				}
+*			}
+*		}
+*	)
+****************************************************************************************************************************************************/
+/**************************************************************
+ *	FontUtils Font对象的工具集
+ **************************************************************/
 THREE.FontUtils = {
 
-	faces: {},
+	faces: {}, //组成字体的面.
 
 	// Just for now. face[weight][style]
 
-	face: 'helvetiker',
-	weight: 'normal',
-	style: 'normal',
-	size: 150,
-	divisions: 10,
+	face: 'helvetiker', //字体名称
+	weight: 'normal',	//字宽,字体笔划的宽度.
+	style: 'normal',    //字体样式,粗体,斜体等等
+	size: 150,	 	    //字体尺寸
+	divisions: 10,	  	//定距等分数量
 
 	getFace: function () {
 
-		try {
+		try {	//捕获字体字宽字体样式等异常
 
 			return this.faces[ this.face ][ this.weight ][ this.style ];
 
@@ -107,8 +125,6 @@ THREE.FontUtils = {
 		return { paths: fontPaths, offset: width };
 
 	},
-
-
 
 
 	extractGlyphPoints: function ( c, face, scale, offset, path ) {

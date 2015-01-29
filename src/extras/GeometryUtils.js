@@ -1,7 +1,9 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
+/**************************************************************
+ *	GeometryUtils geometry对象的工具集
+ **************************************************************/
 THREE.GeometryUtils = {
 
 	merge: function ( geometry1, geometry2, materialIndexOffset ) {

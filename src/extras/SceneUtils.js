@@ -2,6 +2,9 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
+/**************************************************************
+ *	SceneUtils scene对象的工具集
+ **************************************************************/
 THREE.SceneUtils = {
 
 	createMultiMaterialObject: function ( geometry, materials ) {

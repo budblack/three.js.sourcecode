@@ -4,6 +4,9 @@
  * @author Daosheng Mu / https://github.com/DaoshengMu/
  */
 
+/**************************************************************
+ *	ImageUtils image对象的工具集
+ **************************************************************/
 THREE.ImageUtils = {
 
 	crossOrigin: undefined,
