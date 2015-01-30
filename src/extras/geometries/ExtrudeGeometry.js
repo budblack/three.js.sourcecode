@@ -24,6 +24,12 @@
  * }
  **/
 
+/*
+///ExtrudeGeometry用来通过截面(参数shape)生成拉伸几何体.
+*/
+///<summary>ExtrudeGeometry</summary>
+///<param name ="shapes" type="THREE.Shape">拉伸几何体截面</param>
+///<param name ="options" type="Object">拉伸几何体参数选项</param>
 THREE.ExtrudeGeometry = function ( shapes, options ) {
 
 	if ( typeof( shapes ) === "undefined" ) {
@@ -31,13 +37,13 @@ THREE.ExtrudeGeometry = function ( shapes, options ) {
 		return;
 	}
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry()方法创建几何体,并将Geometry对象的方法供ExtrudeGeometry对象使用.
 
 	shapes = shapes instanceof Array ? shapes : [ shapes ];
 
 	this.addShapeList( shapes, options );
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算三角面法线
 
 	// can't really use automatic vertex normals
 	// as then front and back sides get smoothed too
@@ -48,9 +54,16 @@ THREE.ExtrudeGeometry = function ( shapes, options ) {
 	//console.log( "took", ( Date.now() - startTime ) );
 
 };
-
+/*************************************************
+****下面是ExtrudeGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.ExtrudeGeometry.prototype = Object.create( THREE.Geometry.prototype );
-
+/*
+///addShapeList方法将截面(参数shape)和参数选项,添加到shapes数组.
+*/
+///<summary>addShapeList</summary>
+///<param name ="shapes" type="THREE.ShapeArray">拉伸几何体截面</param>
+///<param name ="options" type="Object">拉伸几何体参数选项</param>
 THREE.ExtrudeGeometry.prototype.addShapeList = function ( shapes, options ) {
 	var sl = shapes.length;
 
@@ -59,28 +72,35 @@ THREE.ExtrudeGeometry.prototype.addShapeList = function ( shapes, options ) {
 		this.addShape( shape, options );
 	}
 };
-
+/*
+///addShape方法将截面(参数shape)和参数选项,获得构造几何体的截面.
+*/
+///<summary>addShape</summary>
+///<param name ="shapes" type="THREE.ShapeArray">拉伸几何体截面</param>
+///<param name ="options" type="Object">拉伸几何体参数选项</param>
+///<returns type="Vector3Array">返回构造几何体的截面.</returns>
 THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
-	var amount = options.amount !== undefined ? options.amount : 100;
+	var amount = options.amount !== undefined ? options.amount : 100;	//拉伸线段的厚度
 
-	var bevelThickness = options.bevelThickness !== undefined ? options.bevelThickness : 6; // 10
-	var bevelSize = options.bevelSize !== undefined ? options.bevelSize : bevelThickness - 2; // 8
-	var bevelSegments = options.bevelSegments !== undefined ? options.bevelSegments : 3;
+	var bevelThickness = options.bevelThickness !== undefined ? options.bevelThickness : 6; // 10 //倒角的厚度,默认初始化为6
+	var bevelSize = options.bevelSize !== undefined ? options.bevelSize : bevelThickness - 2; // 8 //从截面外轮廓倒角的尺寸,默认初始化为bevelThickness - 2
+	var bevelSegments = options.bevelSegments !== undefined ? options.bevelSegments : 3;	//倒角部分的细分线段数,默认初始化为3
 
-	var bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true; // false
+	var bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true; // false 	//是否启用倒角,默认true
 
-	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;
+	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;	//曲线上的顶点数量
 
-	var steps = options.steps !== undefined ? options.steps : 1;
+	var steps = options.steps !== undefined ? options.steps : 1;	//步数,曲线拉伸的细分线段数,默认初始化为1.
 
-	var extrudePath = options.extrudePath;
-	var extrudePts, extrudeByPath = false;
+	var extrudePath = options.extrudePath; 	//拉伸几何体跟随的路径
+	var extrudePts, extrudeByPath = false;	//拉伸几何体是否跟随路径.
 
-	var material = options.material;
-	var extrudeMaterial = options.extrudeMaterial;
+	var material = options.material;	//正面和背面材质属性
+	var extrudeMaterial = options.extrudeMaterial; //拉伸几何体和斜面的材质属性
 
 	// Use default WorldUVGenerator if no UV generators are specified.
+	// 如果没有指定uv生成器,使用默认的全局uv生成器.
 	var uvgen = options.UVGenerator !== undefined ? options.UVGenerator : THREE.ExtrudeGeometry.WorldUVGenerator;
 
 	var splineTube, binormal, normal, position2;
@@ -88,15 +108,15 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 		extrudePts = extrudePath.getSpacedPoints( steps );
 
-		extrudeByPath = true;
-		bevelEnabled = false; // bevels not supported for path extrusion
+		extrudeByPath = true;	//启用拉伸几何体跟随路径
+		bevelEnabled = false; // bevels not supported for path extrusion 倒角不能用在路径跟随的方式生成的拉伸几何体
 
 		// SETUP TNB variables
 
 		// Reuse TNB from TubeGeomtry for now.
 		// TODO1 - have a .isClosed in spline?
 
-		splineTube = options.frames !== undefined ? options.frames : new THREE.TubeGeometry.FrenetFrames(extrudePath, steps, false);
+		splineTube = options.frames !== undefined ? options.frames : new THREE.TubeGeometry.FrenetFrames(extrudePath, steps, false);	//包含三角形,法线,副法线数组
 
 		// console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
 
@@ -107,6 +127,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 	}
 
 	// Safeguards if bevels are not enabled
+	// 如果没有启用倒角,将倒角大小,厚度设置为0
 
 	if ( ! bevelEnabled ) {
 
@@ -116,26 +137,27 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	}
 
-	// Variables initalization
+	// Variables initalization 变量初始化
 
-	var ahole, h, hl; // looping of holes
+	var ahole, h, hl; // looping of holes 遍历镂空(孔洞)
 	var scope = this;
 	var bevelPoints = [];
 
 	var shapesOffset = this.vertices.length;
 
-	var shapePoints = shape.extractPoints( curveSegments );
+	var shapePoints = shape.extractPoints( curveSegments );	//定数等分截面,获得顶点坐标数组
 
 	var vertices = shapePoints.shape;
 	var holes = shapePoints.holes;
 
-	var reverse = ! THREE.Shape.Utils.isClockWise( vertices ) ;
+	var reverse = ! THREE.Shape.Utils.isClockWise( vertices ) ; 	//反转顶点顺序
 
 	if ( reverse ) {
 
 		vertices = vertices.reverse();
 
 		// Maybe we should also check if holes are in the opposite direction, just to be safe ...
+		// 同样检查镂空(孔洞)顶点的顺序.
 
 		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
 
@@ -149,16 +171,16 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 		}
 
-		reverse = false; // If vertices are in order now, we shouldn't need to worry about them again (hopefully)!
+		reverse = false; // If vertices are in order now, we shouldn't need to worry about them again (hopefully)! 如果顶点顺序正确,不用担心他们了.
 
 	}
 
-
+	//计算三角面.
 	var faces = THREE.Shape.Utils.triangulateShape ( vertices, holes );
 
 	/* Vertices */
 
-	var contour = vertices; // vertices has all points but contour has only points of circumference
+	var contour = vertices; // vertices has all points but contour has only points of circumference vertices包含所有的点,但是contour只有围绕圆周的顶点.
 
 	for ( h = 0, hl = holes.length;  h < hl; h ++ ) {
 
@@ -168,7 +190,14 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	}
 
-
+	/*
+	///scalePt2方法将参数vec上的x,y,z分量分别乘以size,然后加上pt,返回结果.
+	*/
+	///<summary>scalePt2</summary>
+	///<param name ="pt" type="Vector3">三维向量</param>
+	///<param name ="vec" type="Vector3">三维向量</param>
+	///<param name ="size" type="float">缩放的标量</param>
+	///<returns type="Vector3Array">返回构造几何体的截面.</returns>
 	function scalePt2 ( pt, vec, size ) {
 
 		if ( ! vec ) console.log( "die" );
@@ -184,10 +213,19 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 
 	// Find directions for point movement
+	// 找点移动的方向
 
 	var RAD_TO_DEGREES = 180 / Math.PI;
 
 
+	/*
+	///scalePt2方法获得倒角,斜面上的顶点.
+	*/
+	///<summary>scalePt2</summary>
+	///<param name ="inPt" type="Vector2">二维向量</param>
+	///<param name ="inPrev" type="Vector2">二维向量</param>
+	///<param name ="inNext" type="Vector2">二维向量</param>
+	///<returns type="Vector3Array">返回二维向量.</returns>
 	function getBevelVec( inPt, inPrev, inNext ) {
 
 		var EPSILON = 0.0000000001;
@@ -203,6 +241,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 		var v_trans_x, v_trans_y, shrink_by = 1;		// resulting translation vector for inPt
 
 		// good reading for geometry algorithms (here: line-line intersection)
+		// 非常不错的几何算法 两条线段求交点:
 		// http://geomalgorithms.com/a05-_intersect-1.html
 
 		var v_prev_x = inPt.x - inPrev.x, v_prev_y = inPt.y - inPrev.y;
@@ -210,17 +249,19 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 		
 		var v_prev_lensq = ( v_prev_x * v_prev_x + v_prev_y * v_prev_y );
 		
-		// check for colinear edges
+		// check for colinear edges 检查共线的边
 		var colinear0 = ( v_prev_x * v_next_y - v_prev_y * v_next_x );
 		
-		if ( Math.abs( colinear0 ) > EPSILON ) {		// not colinear
+		if ( Math.abs( colinear0 ) > EPSILON ) {		// not colinear 不共线
 			
 			// length of vectors for normalizing
+			// 矢量长度归一化
 	
 			var v_prev_len = Math.sqrt( v_prev_lensq );
 			var v_next_len = Math.sqrt( v_next_x * v_next_x + v_next_y * v_next_y );
 			
 			// shift adjacent points by unit vectors to the left
+			// 按照单位向量左移相邻的点
 	
 			var ptPrevShift_x = ( inPrev.x - v_prev_y / v_prev_len );
 			var ptPrevShift_y = ( inPrev.y + v_prev_x / v_prev_len );
@@ -229,17 +270,20 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 			var ptNextShift_y = ( inNext.y + v_next_x / v_next_len );
 	
 			// scaling factor for v_prev to intersection point
+			// v_prev到交点的缩放因子
 	
 			var sf = (  ( ptNextShift_x - ptPrevShift_x ) * v_next_y -
 						( ptNextShift_y - ptPrevShift_y ) * v_next_x    ) /
 					  ( v_prev_x * v_next_y - v_prev_y * v_next_x );
 	
 			// vector from inPt to intersection point
+			// 从inPt到交点的向量
 	
 			v_trans_x = ( ptPrevShift_x + v_prev_x * sf - inPt.x );
 			v_trans_y = ( ptPrevShift_y + v_prev_y * sf - inPt.y );
 	
 			// Don't normalize!, otherwise sharp corners become ugly
+			// 不能归一化,否则会出现特别丑陋的尖角
 			//  but prevent crazy spikes
 			var v_trans_lensq = ( v_trans_x * v_trans_x + v_trans_y * v_trans_y )
 			if ( v_trans_lensq <= 2 ) {
@@ -248,7 +292,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 				shrink_by = Math.sqrt( v_trans_lensq / 2 );
 			}
 			
-		} else {		// handle special case of colinear edges
+		} else {		// handle special case of colinear edges 处理共边的特殊情况
 
 			var direction_eq = false;		// assumes: opposite
 			if ( v_prev_x > EPSILON ) {
@@ -275,7 +319,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 		}
 
-		return	new THREE.Vector2( v_trans_x / shrink_by, v_trans_y / shrink_by );
+		return	new THREE.Vector2( v_trans_x / shrink_by, v_trans_y / shrink_by );	//返回
 
 	}
 
@@ -323,6 +367,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 
 	// Loop bevelSegments, 1 for the front, 1 for the back
+	// 遍历倒角细分线段数
 
 	for ( b = 0; b < bevelSegments; b ++ ) {
 	//for ( b = bevelSegments; b > 0; b -- ) {
@@ -344,7 +389,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 		}
 
-		// expand holes
+		// expand holes 扩大镂空
 
 		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
 
@@ -365,7 +410,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	bs = bevelSize;
 
-	// Back facing vertices
+	// Back facing vertices 背面顶点
 
 	for ( i = 0; i < vlen; i ++ ) {
 
@@ -390,8 +435,9 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	}
 
-	// Add stepped vertices...
+	// Add stepped vertices... 添加中间顶点
 	// Including front facing vertices
+	// 包含正面的顶点
 
 	var s;
 
@@ -424,6 +470,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 
 	// Add bevel segments planes
+	// 添加倒角的斜面
 
 	//for ( b = 1; b <= bevelSegments; b ++ ) {
 	for ( b = bevelSegments - 1; b >= 0; b -- ) {
@@ -472,16 +519,20 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 	/* Faces */
 
 	// Top and bottom faces
-
+	// 顶面和底面
 	buildLidFaces();
 
 	// Sides faces
-
+	// 侧面
 	buildSideFaces();
 
 
 	/////  Internal functions
-
+	/*
+	///buildLidFaces方法构建顶面和底面
+	///
+	*/
+	///<summary>buildLidFaces</summary>
 	function buildLidFaces() {
 
 		if ( bevelEnabled ) {
@@ -534,7 +585,11 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 	}
 
 	// Create faces for the z-sides of the shape
-
+	/*
+	///buildLidFaces方法构建侧面
+	///
+	*/
+	///<summary>buildLidFaces</summary>
 	function buildSideFaces() {
 
 		var layeroffset = 0;
@@ -552,7 +607,14 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 		}
 
 	}
-
+	/*
+	///sidewalls方法构建侧面的具体实现,返回侧面的顶点和面和生成uv
+	///
+	*/
+	///<summary>sidewalls</summary>
+	///<param name ="contour" type="THREE.ShapeArray">侧面的顶点数组</param>
+	///<param name ="layeroffset" type="int">侧面细分线段的第几层</param>
+	///<returns type="Vector3Array">返回侧面的顶点和面和生成uv.</returns>
 	function sidewalls( contour, layeroffset ) {
 
 		var j, k;
@@ -585,13 +647,28 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	}
 
-
+	/*
+	///v方法将x,y,z压入拉伸立方体顶点数组.
+	///
+	*/
+	///<summary>v</summary>
+	///<param name ="a" type="int">四边形的a点索引</param>
+	///<param name ="b" type="int">四边形的b点索引</param>
+	///<param name ="c" type="int">四边形的c点索引</param>
 	function v( x, y, z ) {
 
 		scope.vertices.push( new THREE.Vector3( x, y, z ) );
 
 	}
-
+	/*
+	///f3方法将3个点组成的三角面,并生成uv坐标.
+	///
+	*/
+	///<summary>f3</summary>
+	///<param name ="a" type="int">四边形的a点索引</param>
+	///<param name ="b" type="int">四边形的b点索引</param>
+	///<param name ="c" type="int">四边形的c点索引</param>
+	///<param name ="isBottom" type="int">底面的uv</param>
 	function f3( a, b, c, isBottom ) {
 
 		a += shapesOffset;
@@ -606,7 +683,20 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
  		scope.faceVertexUvs[ 0 ].push( uvs );
 
 	}
-
+	/*
+	///f4方法将4个点组成的卖你三角化为三角面,并生成uv坐标.
+	///
+	*/
+	///<summary>f4</summary>
+	///<param name ="a" type="int">四边形的a点索引</param>
+	///<param name ="b" type="int">四边形的b点索引</param>
+	///<param name ="c" type="int">四边形的c点索引</param>
+	///<param name ="d" type="int">四边形的d点索引</param>
+	///<param name ="wallContour" type="int">侧面轮廓</param>
+	///<param name ="stepIndex" type="int">处于侧面轮廓细分的索引</param>
+	///<param name ="stepsLength" type="int">侧面轮廓细分数</param>
+	///<param name ="contourIndex1" type="int">第一个轮廓索引</param>
+	///<param name ="contourIndex2" type="int">第二个轮廓索引</param>
 	function f4( a, b, c, d, wallContour, stepIndex, stepsLength, contourIndex1, contourIndex2 ) {
 
 		a += shapesOffset;
@@ -626,9 +716,21 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 	}
 
 };
-
+/*************************************************
+****下面是ExtrudeGeometry对象的全局坐标生成器
+**************************************************/
 THREE.ExtrudeGeometry.WorldUVGenerator = {
-
+	/*
+	///generateTopUV方法生成顶面的uv
+	///
+	*/
+	///<summary>generateTopUV</summary>
+	///<param name ="geometry" type="ExtrudeGeometry">拉伸几何体对象</param>
+	///<param name ="extrudedShape" type="Shape">顶面形状</param>
+	///<param name ="extrudeOptions" type="int">拉伸参数选项</param>
+	///<param name ="indexA" type="int">三角面的a点索引</param>
+	///<param name ="indexB" type="int">三角面的b点索引</param>
+	///<param name ="indexC" type="int">三角面的c点索引</param>
 	generateTopUV: function( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC ) {
 		var ax = geometry.vertices[ indexA ].x,
 			ay = geometry.vertices[ indexA ].y,
@@ -646,13 +748,39 @@ THREE.ExtrudeGeometry.WorldUVGenerator = {
 		];
 
 	},
-
+	/*
+	///generateBottomUV方法生成顶面的uv
+	///
+	*/
+	///<summary>generateBottomUV</summary>
+	///<param name ="geometry" type="ExtrudeGeometry">拉伸几何体对象</param>
+	///<param name ="extrudedShape" type="Shape">顶面形状</param>
+	///<param name ="extrudeOptions" type="int">拉伸参数选项</param>
+	///<param name ="indexA" type="int">三角面的a点索引</param>
+	///<param name ="indexB" type="int">三角面的b点索引</param>
+	///<param name ="indexC" type="int">三角面的c点索引</param>
 	generateBottomUV: function( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC ) {
 
 		return this.generateTopUV( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC );
 
 	},
-
+	/*
+	///generateSideWallUV方法生成侧面的uv
+	///
+	*/
+	///<summary>generateSideWallUV</summary>
+	///<param name ="geometry" type="ExtrudeGeometry">拉伸几何体对象</param>
+	///<param name ="extrudedShape" type="Shape">顶面形状</param>
+	///<param name ="wallContour" type="int">侧面轮廓</param>
+	///<param name ="extrudeOptions" type="int">拉伸参数选项</param>
+	///<param name ="indexA" type="int">四边形的a点索引</param>
+	///<param name ="indexB" type="int">四边形的b点索引</param>
+	///<param name ="indexC" type="int">四边形的c点索引</param>
+	///<param name ="indexC" type="int">四边形的d点索引</param>
+	///<param name ="stepIndex" type="int">处于侧面轮廓细分的索引</param>
+	///<param name ="stepsLength" type="int">侧面轮廓细分数</param>
+	///<param name ="contourIndex1" type="int">第一个轮廓索引</param>
+	///<param name ="contourIndex2" type="int">第二个轮廓索引</param>
 	generateSideWallUV: function( geometry, extrudedShape, wallContour, extrudeOptions,
 	                              indexA, indexB, indexC, indexD, stepIndex, stepsLength,
 	                              contourIndex1, contourIndex2 ) {
