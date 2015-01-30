@@ -4,7 +4,7 @@
  * @author bhouston / http://exocortex.com
  */
 /*
-///LatheGeometry类通过截面顶点数组(points)创建旋转几何体.
+///LatheGeometry类通过截面顶点数组(points)创建旋转几何体.用于生成具有轴对称网格类。可能的用途包括甜甜圈，管，花瓶等车床绕z轴旋转。
 ///
 ///	用法: 
 ///		var points = [];
