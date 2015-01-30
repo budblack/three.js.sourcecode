@@ -71,7 +71,7 @@ src
 ¦  ¦      CircleGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      CubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      CylinderGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦  ¦      ExtrudeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
+¦  ¦      ExtrudeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      IcosahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --  0%
 ¦  ¦      LatheGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
 ¦  ¦      OctahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%

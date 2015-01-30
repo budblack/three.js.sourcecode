@@ -25,7 +25,7 @@
  **/
 
 /*
-///ExtrudeGeometry用来通过截面(参数shape)生成拉伸几何体.
+///ExtrudeGeometry用来通过截面(参数shape)和参数选项(options)生成拉伸几何体.
 */
 ///<summary>ExtrudeGeometry</summary>
 ///<param name ="shapes" type="THREE.Shape">拉伸几何体截面</param>
@@ -41,7 +41,7 @@ THREE.ExtrudeGeometry = function ( shapes, options ) {
 
 	shapes = shapes instanceof Array ? shapes : [ shapes ];
 
-	this.addShapeList( shapes, options );
+	this.addShapeList( shapes, options );	//将截面(参数shape)和参数选项,添加到shapes数组.
 
 	this.computeFaceNormals();	//计算三角面法线
 
@@ -89,7 +89,7 @@ THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
 
 	var bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true; // false 	//是否启用倒角,默认true
 
-	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;	//曲线上的顶点数量
+	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;	//曲线上的顶点数量,默认为12
 
 	var steps = options.steps !== undefined ? options.steps : 1;	//步数,曲线拉伸的细分线段数,默认初始化为1.
 
