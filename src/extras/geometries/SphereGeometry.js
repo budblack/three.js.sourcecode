@@ -1,34 +1,49 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
+/*
+///SphereGeometry用来在三维空间内创建一个球体对象.
+///
+///	用法: var geometry = new THREE.SphereGeometry(5,32,32);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var sphere = new THREE.Mesh(geometry,material);
+/// 	  scene.add(sphere);
+*/
+///<summary>SphereGeometry</summary>
+///<param name ="radius" type="float">球体体半径</param>
+///<param name ="widthSegments" type="int">球体宽度细分线段数,应该是经线吧</param>
+///<param name ="heightSegments" type="int">球体高度细分线段数,应该是纬线吧</param>
+///<param name ="phiStart" type="float">球体赤道线的起始点弧度</param>
+///<param name ="phiLength" type="float">球体赤道线的弧长</param>
+///<param name ="thetaStart" type="float">球体经线起始点弧度</param>
+///<param name ="thetaLength" type="float">球体经线弧长</param>
 THREE.SphereGeometry = function ( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength ) {
 
 	THREE.Geometry.call( this );
 
 	this.parameters = {
-		radius: radius,
-		widthSegments: widthSegments,
-		heightSegments: heightSegments,
-		phiStart: phiStart,
-		phiLength: phiLength,
-		thetaStart: thetaStart,
-		thetaLength: thetaLength 
+		radius: radius,	//球体体半径
+		widthSegments: widthSegments,	//球体宽度细分线段数,应该是经线吧
+		heightSegments: heightSegments,	//球体高度细分线段数,应该是纬线吧
+		phiStart: phiStart,	//球体赤道线的起始点弧度
+		phiLength: phiLength,	//球体赤道线的弧长
+		thetaStart: thetaStart,	 	//球体经线起始点弧度
+		thetaLength: thetaLength 	//球体经线弧长
 	};
 
-	radius = radius || 50;
+	radius = radius || 50;	//球体体半径,默认初始化为50.
 
-	widthSegments = Math.max( 3, Math.floor( widthSegments ) || 8 );
-	heightSegments = Math.max( 2, Math.floor( heightSegments ) || 6 );
+	widthSegments = Math.max( 3, Math.floor( widthSegments ) || 8 );	//球体宽度细分线段数,应该是经线吧,默认初始化为8
+	heightSegments = Math.max( 2, Math.floor( heightSegments ) || 6 );	//球体高度细分线段数,应该是纬线吧,默认初始化为6
 
-	phiStart = phiStart !== undefined ? phiStart : 0;
-	phiLength = phiLength !== undefined ? phiLength : Math.PI * 2;
+	phiStart = phiStart !== undefined ? phiStart : 0;	  	//球体赤道线的起始点弧度,默认初始化为0
+	phiLength = phiLength !== undefined ? phiLength : Math.PI * 2;	//球体赤道线的弧长,默认初始化为2倍的PI,360度
 
-	thetaStart = thetaStart !== undefined ? thetaStart : 0;
-	thetaLength = thetaLength !== undefined ? thetaLength : Math.PI;
+	thetaStart = thetaStart !== undefined ? thetaStart : 0;	 	//球体经线起始点弧度,默认初始化为0
+	thetaLength = thetaLength !== undefined ? thetaLength : Math.PI; 	//球体经线弧长,默认初始化为PI,180度.
 
 	var x, y, vertices = [], uvs = [];
-
+	//计算顶点数据,压入vertices数组.
 	for ( y = 0; y <= heightSegments; y ++ ) {
 
 		var verticesRow = [];
@@ -55,7 +70,7 @@ THREE.SphereGeometry = function ( radius, widthSegments, heightSegments, phiStar
 		uvs.push( uvsRow );
 
 	}
-
+	//计算三角面,以及贴图uv.
 	for ( y = 0; y < heightSegments; y ++ ) {
 
 		for ( x = 0; x < widthSegments; x ++ ) {
@@ -101,10 +116,12 @@ THREE.SphereGeometry = function ( radius, widthSegments, heightSegments, phiStar
 
 	}
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算面的法线.
 
-	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );	//计算球体边界.
 
 };
-
+/*************************************************
+****下面是SphereGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.SphereGeometry.prototype = Object.create( THREE.Geometry.prototype );
