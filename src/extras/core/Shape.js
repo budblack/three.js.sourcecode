@@ -204,9 +204,14 @@ THREE.Shape.prototype.extractAllSpacedPoints = function ( divisions ) {
 /**************************************************************
  *	Utils shape对象的工具集
  **************************************************************/
-
 THREE.Shape.Utils = {
-
+	/*
+	///triangulateShape方法将传递的顶点数组(参数contour)和镂空(孔洞)数组(参数holes)三角化.
+	*/
+	///<summary>triangulateShape</summary>
+	///<param name ="contour" type="Vector3Array">拉伸几何体的顶点数据.</param>
+	///<param name ="holes" type="Vector3Array">镂空(孔洞)顶点数据.</param>
+	///<returns type="Vector3Array">返回围绕形状的顶点索引.</returns>
 	triangulateShape: function ( contour, holes ) {
 
 		function point_in_segment_2D_colin( inSegPt1, inSegPt2, inOtherPt ) {
@@ -226,6 +231,16 @@ THREE.Shape.Utils = {
 			}
 		}
 
+		/*
+		///intersect_segments_2D方法返回两条线段的交点.
+		*/
+		///<summary>intersect_segments_2D</summary>
+		///<param name ="inSeg1Pt1" type="Vector2">要检查交点的第一条线的起始点.</param>
+		///<param name ="inSeg1Pt2" type="Vector2">要检查交点的第一条线的结束点.</param>
+		///<param name ="inSeg2Pt1" type="Vector2">要检查交点的第二条线的起始点.</param>
+		///<param name ="inSeg2Pt2" type="Vector2">要检查交点的第二条线的结束点.</param>
+		///<param name ="inExcludeAdjacentSegs" type="boolean">是否排除相邻的线段.</param>
+		///<returns type="Vector2Array">二维向量数组.</returns>
 		function intersect_segments_2D( inSeg1Pt1, inSeg1Pt2, inSeg2Pt1, inSeg2Pt2, inExcludeAdjacentSegs ) {
 			var EPSILON = 0.0000000001;
 
@@ -238,68 +253,71 @@ THREE.Shape.Utils = {
 			var limit		= seg1dy * seg2dx - seg1dx * seg2dy;
 			var perpSeg1	= seg1dy * seg1seg2dx - seg1dx * seg1seg2dy;
 
-			if ( Math.abs(limit) > EPSILON ) {			// not parallel
+			if ( Math.abs(limit) > EPSILON ) {			// not parallel //两条线不平行
 
 				var perpSeg2;
 				if ( limit > 0 ) {
-					if ( ( perpSeg1 < 0 ) || ( perpSeg1 > limit ) ) 		return [];
+					if ( ( perpSeg1 < 0 ) || ( perpSeg1 > limit ) ) 		return [];	//返回空数组
 					perpSeg2 = seg2dy * seg1seg2dx - seg2dx * seg1seg2dy;
-					if ( ( perpSeg2 < 0 ) || ( perpSeg2 > limit ) ) 		return [];
+					if ( ( perpSeg2 < 0 ) || ( perpSeg2 > limit ) ) 		return [];	//返回空数组
 				} else {
-					if ( ( perpSeg1 > 0 ) || ( perpSeg1 < limit ) ) 		return [];
+					if ( ( perpSeg1 > 0 ) || ( perpSeg1 < limit ) ) 		return [];	//返回空数组
 					perpSeg2 = seg2dy * seg1seg2dx - seg2dx * seg1seg2dy;
-					if ( ( perpSeg2 > 0 ) || ( perpSeg2 < limit ) ) 		return [];
+					if ( ( perpSeg2 > 0 ) || ( perpSeg2 < limit ) ) 		return [];	//返回空数组
 				}
 
 				// i.e. to reduce rounding errors
 				// intersection at endpoint of segment#1?
+				// 交点位于第一条线的端点
 				if ( perpSeg2 == 0 ) {
 					if ( ( inExcludeAdjacentSegs ) &&
-						 ( ( perpSeg1 == 0 ) || ( perpSeg1 == limit ) ) )		return [];
+						 ( ( perpSeg1 == 0 ) || ( perpSeg1 == limit ) ) )		return [];	//返回空数组
 					return  [ inSeg1Pt1 ];
 				}
 				if ( perpSeg2 == limit ) {
 					if ( ( inExcludeAdjacentSegs ) &&
-						 ( ( perpSeg1 == 0 ) || ( perpSeg1 == limit ) ) )		return [];
+						 ( ( perpSeg1 == 0 ) || ( perpSeg1 == limit ) ) )		return [];	//返回空数组
 					return  [ inSeg1Pt2 ];
 				}
 				// intersection at endpoint of segment#2?
+				// 交点位于第二条线的端点
 				if ( perpSeg1 == 0 )		return  [ inSeg2Pt1 ];
 				if ( perpSeg1 == limit )	return  [ inSeg2Pt2 ];
 
 				// return real intersection point
+				// 返回真正的交点
 				var factorSeg1 = perpSeg2 / limit;
 				return	[ { x: inSeg1Pt1.x + factorSeg1 * seg1dx,
 							y: inSeg1Pt1.y + factorSeg1 * seg1dy } ];
 
-			} else {		// parallel or colinear
+			} else {		// parallel or colinear 平行或共线
 				if ( ( perpSeg1 != 0 ) ||
-					 ( seg2dy * seg1seg2dx != seg2dx * seg1seg2dy ) ) 			return [];
+					 ( seg2dy * seg1seg2dx != seg2dx * seg1seg2dy ) ) 			return [];	//返回空数组
 
-				// they are collinear or degenerate
-				var seg1Pt = ( (seg1dx == 0) && (seg1dy == 0) );	// segment1 ist just a point?
-				var seg2Pt = ( (seg2dx == 0) && (seg2dy == 0) );	// segment2 ist just a point?
-				// both segments are points
+				// they are collinear or degenerate 两条线共线或则无效
+				var seg1Pt = ( (seg1dx == 0) && (seg1dy == 0) );	// segment1 ist just a point? 第一条线只是一个点
+				var seg2Pt = ( (seg2dx == 0) && (seg2dy == 0) );	// segment2 ist just a point? 第二条线只是一个点
+				// both segments are points 两条线都是点
 				if ( seg1Pt && seg2Pt ) {
 					if ( (inSeg1Pt1.x != inSeg2Pt1.x) ||
-						 (inSeg1Pt1.y != inSeg2Pt1.y) )		return [];   	// they are distinct  points
-					return  [ inSeg1Pt1 ];                 					// they are the same point
+						 (inSeg1Pt1.y != inSeg2Pt1.y) )		return [];   	// they are distinct  points 两个点不共点,返回空数组
+					return  [ inSeg1Pt1 ];                 					// they are the same point 共点
 				}
-				// segment#1  is a single point
+				// segment#1  is a single point 第一条线段是一个点
 				if ( seg1Pt ) {
-					if (! point_in_segment_2D_colin( inSeg2Pt1, inSeg2Pt2, inSeg1Pt1 ) )		return [];		// but not in segment#2
+					if (! point_in_segment_2D_colin( inSeg2Pt1, inSeg2Pt2, inSeg1Pt1 ) )		return [];		// but not in segment#2 不在第二条线段内,返回空数组
 					return  [ inSeg1Pt1 ];
 				}
-				// segment#2  is a single point
+				// segment#2  is a single point 第二条线是一个点
 				if ( seg2Pt ) {
-					if (! point_in_segment_2D_colin( inSeg1Pt1, inSeg1Pt2, inSeg2Pt1 ) )		return [];		// but not in segment#1
+					if (! point_in_segment_2D_colin( inSeg1Pt1, inSeg1Pt2, inSeg2Pt1 ) )		return [];		// but not in segment#1 不在第一条线段内,返回空数组
 					return  [ inSeg2Pt1 ];
 				}
 
-				// they are collinear segments, which might overlap
+				// they are collinear segments, which might overlap 两条线共线,有可能重叠.
 				var seg1min, seg1max, seg1minVal, seg1maxVal;
 				var seg2min, seg2max, seg2minVal, seg2maxVal;
-				if (seg1dx != 0) {		// the segments are NOT on a vertical line
+				if (seg1dx != 0) {		// the segments are NOT on a vertical line 线不是垂直线
 					if ( inSeg1Pt1.x < inSeg1Pt2.x ) {
 						seg1min = inSeg1Pt1; seg1minVal = inSeg1Pt1.x;
 						seg1max = inSeg1Pt2; seg1maxVal = inSeg1Pt2.x;
@@ -314,7 +332,7 @@ THREE.Shape.Utils = {
 						seg2min = inSeg2Pt2; seg2minVal = inSeg2Pt2.x;
 						seg2max = inSeg2Pt1; seg2maxVal = inSeg2Pt1.x;
 					}
-				} else {				// the segments are on a vertical line
+				} else {				// the segments are on a vertical line 
 					if ( inSeg1Pt1.y < inSeg1Pt2.y ) {
 						seg1min = inSeg1Pt1; seg1minVal = inSeg1Pt1.y;
 						seg1max = inSeg1Pt2; seg1maxVal = inSeg1Pt2.y;
@@ -350,8 +368,17 @@ THREE.Shape.Utils = {
 			}
 		}
 
+		/*
+		///isPointInsideAngle方法判断第四个参数是否在前三个参数组成的三角形内.
+		*/
+		///<summary>isPointInsideAngle</summary>
+		///<param name ="inVertex" type="int">顶点索引.</param>
+		///<param name ="inLegFromPt" type="int">上一个顶点索引.</param>
+		///<param name ="inLegToPt" type="int">下一个顶点索引.</param>
+		///<param name ="inOtherPt" type="int">孔洞顶点索引.</param>
+		///<returns type="boolean">true 或者 false.</returns>
 		function isPointInsideAngle( inVertex, inLegFromPt, inLegToPt, inOtherPt ) {
-			// The order of legs is important
+			// The order of legs is important	参数的排列顺序非常重要.
 
 			var EPSILON = 0.0000000001;
 
@@ -380,14 +407,29 @@ THREE.Shape.Utils = {
 			}
 		}
 
-
+		/*
+		///removeHoles方法从拉伸几何体中删除孔洞.
+		*/
+		///<summary>removeHoles</summary>
+		///<param name ="contour" type="Vector3Array">拉伸几何体的顶点数据.</param>
+		///<param name ="holes" type="Vector3Array">镂空(孔洞)顶点数据.</param>
+		///<returns type="Object">返回没有镂空(孔洞)的拉伸几何体.</returns>
 		function removeHoles( contour, holes ) {
 
 			var shape = contour.concat(); // work on this shape
 			var hole;
 
+			/*
+			///isCutLineInsideAngles方法返回当前索引所指的图形顶点在镂空顶点,以及前一个顶点,后一个顶点组成的三角形内.
+			// 或者当前索引所指的镂空顶点在图形顶点,以及前一个顶点,后一个顶点组成的三角形内,true为真.
+			*/
+			///<summary>isCutLineInsideAngles</summary>
+			///<param name ="inShapeIdx" type="int">拉伸几何体的顶点数据.</param>
+			///<param name ="inHoleIdx" type="int">镂空(孔洞)顶点数据.</param>
+			///<returns type="boolean">true 或者 false.</returns>
 			function isCutLineInsideAngles( inShapeIdx, inHoleIdx ) {
 				// Check if hole point lies within angle around shape point
+				// 检查镂空(孔洞)的顶点在
 				var lastShapeIdx = shape.length - 1;
 
 				var prevShapeIdx = inShapeIdx - 1;
@@ -403,6 +445,7 @@ THREE.Shape.Utils = {
 				}
 
 				// Check if shape point lies within angle around hole point
+				// 检查图形顶点位于环绕镂空(孔洞)的三角形内.
 				var lastHoleIdx = hole.length - 1;
 
 				var prevHoleIdx = inHoleIdx - 1;
@@ -417,11 +460,18 @@ THREE.Shape.Utils = {
 					return	false;
 				}
 
-				return	true;
+				return	true;	//
 			}
-
+			/*
+			///intersectsShapeEdge方法检查镂空(孔洞)与形状边界是否有交点,true为真.
+			*/
+			///<summary>isCutLineInsideAngles</summary>
+			///<param name ="inShapeIdx" type="int">拉伸几何体的顶点数据.</param>
+			///<param name ="inHoleIdx" type="int">镂空(孔洞)顶点数据.</param>
+			///<returns type="boolean">true 或者 false.</returns>
 			function intersectsShapeEdge( inShapePt, inHolePt ) {
 				// checks for intersections with shape edges
+				// 检查镂空(孔洞)与形状边界是否有交点.
 				var sIdx, nextIdx, intersection;
 				for ( sIdx = 0; sIdx < shape.length; sIdx ++ ) {
 					nextIdx = sIdx+1; nextIdx %= shape.length;
@@ -433,9 +483,16 @@ THREE.Shape.Utils = {
 			}
 
 			var indepHoles = [];
-
+			/*
+			///intersectsShapeEdge方法检查当前的镂空(孔洞)是否是否与其它镂空(孔洞)边界相交,true为真.
+			*/
+			///<summary>isCutLineInsideAngles</summary>
+			///<param name ="inShapeIdx" type="int">拉伸几何体的顶点数据.</param>
+			///<param name ="inHoleIdx" type="int">镂空(孔洞)顶点数据.</param>
+			///<returns type="boolean">true 或者 false.</returns>
 			function intersectsHoleEdge( inShapePt, inHolePt ) {
 				// checks for intersections with hole edges
+				// 检查当前的镂空(孔洞)是否是否与其它镂空(孔洞)边界相交.
 				var ihIdx, chkHole,
 					hIdx, nextIdx, intersection;
 				for ( ihIdx = 0; ihIdx < indepHoles.length; ihIdx ++ ) {
@@ -471,26 +528,30 @@ THREE.Shape.Utils = {
 				}
 
 				// search for shape-vertex and hole-vertex,
+				// 搜索形状的顶点和镂空(孔洞)顶点
 				// which can be connected without intersections
+				// 哪些可以连接并无交点.
 				for ( shapeIndex = minShapeIndex; shapeIndex < shape.length; shapeIndex ++ ) {
 
 					shapePt = shape[ shapeIndex ];
 					holeIndex	= - 1;
 
 					// search for hole which can be reached without intersections
+					// 搜索镂空(孔洞)的顶点,哪些可以到达并没有交点.
 					for ( var h = 0; h < indepHoles.length; h ++ ) {
 						holeIdx = indepHoles[h];
 
 						// prevent multiple checks
+						// 避免多次检查
 						cutKey = shapePt.x + ":" + shapePt.y + ":" + holeIdx;
 						if ( failedCuts[cutKey] !== undefined )			continue;
 
 						hole = holes[holeIdx];
 						for ( var h2 = 0; h2 < hole.length; h2 ++ ) {
 							holePt = hole[ h2 ];
-							if (! isCutLineInsideAngles( shapeIndex, h2 ) )		continue;
-							if ( intersectsShapeEdge( shapePt, holePt ) )		continue;
-							if ( intersectsHoleEdge( shapePt, holePt ) )		continue;
+							if (! isCutLineInsideAngles( shapeIndex, h2 ) )		continue;	//如果孔洞顶点不在切线内
+							if ( intersectsShapeEdge( shapePt, holePt ) )		continue;	//如果与图形的边相交.
+							if ( intersectsHoleEdge( shapePt, holePt ) )		continue;	//如果与镂空(空洞)的边相交.
 
 							holeIndex = h2;
 							indepHoles.splice(h,1);
@@ -509,15 +570,15 @@ THREE.Shape.Utils = {
 
 							break;
 						}
-						if ( holeIndex >= 0 )	break;		// hole-vertex found
+						if ( holeIndex >= 0 )	break;		// hole-vertex found 找到镂空顶点
 
-						failedCuts[cutKey] = true;			// remember failure
+						failedCuts[cutKey] = true;			// remember failure	//添加切割线顶点索引
 					}
-					if ( holeIndex >= 0 )	break;		// hole-vertex found
+					if ( holeIndex >= 0 )	break;		// hole-vertex found	//找到镂空(孔洞)顶点
 				}
 			}
 
-			return shape; 			/* shape with no holes */
+			return shape; 			/* shape with no holes */ // 返回不包含镂空(孔洞)的形状.
 		}
 
 
@@ -526,18 +587,19 @@ THREE.Shape.Utils = {
 			allPointsMap = {};
 
 		// To maintain reference to old shape, one must match coordinates, or offset the indices from original arrays. It's probably easier to do the first.
+		// 将孔洞的顶点按照图形原来坐标顺序,偏移索引,这是首先能做的.
 
-		var allpoints = contour.concat();
+		var allpoints = contour.concat(); 	//声明数组,存放合并后的顶点数组.
 
-		for ( var h = 0, hl = holes.length; h < hl; h ++ ) {
+		for ( var h = 0, hl = holes.length; h < hl; h ++ ) {	//遍历镂空(孔洞)的顶点
 
-			Array.prototype.push.apply( allpoints, holes[h] );
+			Array.prototype.push.apply( allpoints, holes[h] );	//将镂空(孔洞)的顶点压入所有顶点数组中.
 
 		}
 
 		//console.log( "allpoints",allpoints, allpoints.length );
 
-		// prepare all points map
+		// prepare all points map 准备所有的顶点的哈希表.
 
 		for ( i = 0, il = allpoints.length; i < il; i ++ ) {
 
@@ -554,12 +616,14 @@ THREE.Shape.Utils = {
 		}
 
 		// remove holes by cutting paths to holes and adding them to the shape
-		var shapeWithoutHoles = removeHoles( contour, holes );
+		// 删除镂空(孔洞),并将孔洞的作为实体的一部分.
+		var shapeWithoutHoles = removeHoles( contour, holes );	//调用removeHoles方法.
 
-		var triangles = THREE.FontUtils.Triangulate( shapeWithoutHoles, false ); // True returns indices for points of spooled shape
+		var triangles = THREE.FontUtils.Triangulate( shapeWithoutHoles, false ); // True returns indices for points of spooled shape 真正返回围绕形状的顶点索引.
 		//console.log( "triangles",triangles, triangles.length );
 
 		// check all face vertices against all points map
+		// 检查所有的面顶点顺序与所有顶点的哈希表一致.
 
 		for ( i = 0, il = triangles.length; i < il; i ++ ) {
 
@@ -581,7 +645,7 @@ THREE.Shape.Utils = {
 
 		}
 
-		return triangles.concat();
+		return triangles.concat(); //返回围绕形状的顶点索引.
 
 	},
 	/*
