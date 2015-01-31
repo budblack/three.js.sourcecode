@@ -78,13 +78,13 @@ src
 ¦  ¦      ParametricGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      PlaneGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      PolyhedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦  ¦      RingGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      RingGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      ShapeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
 ¦  ¦      SphereGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      TetrahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --  0%
 ¦  ¦      TextGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦  ¦      TorusGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
-¦  ¦      TorusKnotGeometry.js - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
+¦  ¦      TorusGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
+¦  ¦      TorusKnotGeometry.js - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      TubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      
 ¦  --helpers

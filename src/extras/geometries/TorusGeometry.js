@@ -6,10 +6,10 @@
 /*
 ///TorusGeometry用来在三维空间内创建一个圆环体对象.
 ///
-///	用法: var geometry = new THREE.SphereGeometry(5,32,32);	
+///	用法: var geometry = new THREE.TorusGeometry(3,1,12,18);	
 /// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-/// 	  var sphere = new THREE.Mesh(geometry,material);
-/// 	  scene.add(sphere);
+/// 	  var torus = new THREE.Mesh(geometry,material);
+/// 	  scene.add(torus);
 */
 ///<summary>TorusGeometry</summary>
 ///<param name ="radius" type="float">圆环体半径</param>
@@ -19,7 +19,7 @@
 ///<param name ="arc" type="float">圆环体圆周弧长,默认初始化为Math.PI * 2</param>
 THREE.TorusGeometry = function ( radius, tube, radialSegments, tubularSegments, arc ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象TorusGeometry来使用.
 
 	this.parameters = {
 		radius: radius,	//圆环体半径

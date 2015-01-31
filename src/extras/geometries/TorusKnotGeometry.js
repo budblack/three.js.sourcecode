@@ -2,34 +2,51 @@
  * @author oosmoxiecode
  * based on http://code.google.com/p/away3d/source/browse/trunk/fp10/Away3D/src/away3d/primitives/TorusKnot.as?spec=svn2473&r=2473
  */
-
+/*
+///TorusKnotGeometryy用来在三维空间内创建一个圆环结或者环形结对象.是由圆环体通过打结构成的扩展三维几何体，常用于制作管状,缠绕.带囊肿类的造型.
+/// 关于环形结的几何特征,参考:http://en.wikipedia.org/wiki/Torus_knot
+/// 各种漂亮的demo:http://katlas.math.toronto.edu/wiki/36_Torus_Knots
+///
+///	用法: var geometry = new THREE.TorusKnotGeometry(5,32,32);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var sphere = new THREE.Mesh(geometry,material);
+/// 	  scene.add(sphere);
+*/
+///<summary>TorusKnotGeometry</summary>
+///<param name ="radius" type="float">环形结半径</param>
+///<param name ="tube" type="float">环形结弯管半径</param>
+///<param name ="radialSegments" type="int">环形结圆周上细分线段数</param>
+///<param name ="tubularSegments" type="int">环形结弯管圆周上的细分线段数</param>
+///<param name ="p" type="float">p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,P决定垂直方向的参数.</param>
+///<param name ="q" type="float">p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,Q决定水平方向的参数.</param>
+///<param name ="heightScale" type="float">环形结高方向上的缩放.默认值是1</param>
 THREE.TorusKnotGeometry = function ( radius, tube, radialSegments, tubularSegments, p, q, heightScale ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象TorusKnotGeometry来使用.
 
 	this.parameters = {
-		radius: radius,
-		tube: tube,
-		radialSegments: radialSegments,
-		tubularSegments: tubularSegments,
-		p: p,
-		q: q,
-		heightScale: heightScale
+		radius: radius,	//环形结半径
+		tube: tube,	//环形结弯管半径
+		radialSegments: radialSegments,	//环形结圆周上细分线段数
+		tubularSegments: tubularSegments,	//环形结弯管圆周上的细分线段数
+		p: p,	//p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,P决定垂直方向的参数.
+		q: q,	//p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,Q决定水平方向的参数.
+		heightScale: heightScale	//环形结高方向上的缩放.默认值是1
 	};
 
-	radius = radius || 100;
-	tube = tube || 40;
-	radialSegments = radialSegments || 64;
-	tubularSegments = tubularSegments || 8;
-	p = p || 2;
-	q = q || 3;
-	heightScale = heightScale || 1;
+	radius = radius || 100;	//环形结半径,默认初始化为100
+	tube = tube || 40;	//环形结弯管半径,默认初始化为40
+	radialSegments = radialSegments || 64;	//环形结圆周上细分线段数,默认初始化为64
+	tubularSegments = tubularSegments || 8;	//环形结弯管圆周上的细分线段数,默认初始化为8
+	p = p || 2;	//p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,P决定垂直方向的参数.默认初始化为2
+	q = q || 3;	//p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,Q决定水平方向的参数.默认初始化为3
+	heightScale = heightScale || 1;	//环形结高方向上的缩放.默认值是1
 	
 	var grid = new Array( radialSegments );
 	var tang = new THREE.Vector3();
 	var n = new THREE.Vector3();
 	var bitan = new THREE.Vector3();
-
+	//计算顶点数据,压入vertices数组
 	for ( var i = 0; i < radialSegments; ++ i ) {
 
 		grid[ i ] = new Array( tubularSegments );
@@ -60,7 +77,7 @@ THREE.TorusKnotGeometry = function ( radius, tube, radialSegments, tubularSegmen
 		}
 
 	}
-
+	//计算三角面,以及贴图uv
 	for ( var i = 0; i < radialSegments; ++ i ) {
 
 		for ( var j = 0; j < tubularSegments; ++ j ) {
@@ -87,9 +104,17 @@ THREE.TorusKnotGeometry = function ( radius, tube, radialSegments, tubularSegmen
 		}
 	}
 
-	this.computeFaceNormals();
-	this.computeVertexNormals();
-
+	this.computeFaceNormals();	//计算面的法线
+	this.computeVertexNormals();	//计算顶点法线
+	/*
+	///getPos方法,已知u,in_q,in_p,radius,heightScale,获得顶点坐标的具体实现.
+	*/
+	///<summary>getPos</summary>
+	///<param name ="u" type="float">圆周上细分线段,当前分段占等分总长度到起点的距离.</param>
+	///<param name ="in_p" type="float">p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,P决定垂直方向的参数.</param>
+	///<param name ="in_q" type="float">p\Q:对knot(节)状方式有效,控制曲线路径缠绕的圈数,Q决定水平方向的参数.</param>
+	///<param name ="radius" type="float">环形结半径</param>
+	///<param name ="heightScale" type="float">环形结高方向上的缩放.</param>
 	function getPos( u, in_q, in_p, radius, heightScale ) {
 
 		var cu = Math.cos( u );
@@ -106,5 +131,7 @@ THREE.TorusKnotGeometry = function ( radius, tube, radialSegments, tubularSegmen
 	}
 
 };
-
+/*************************************************
+****下面是TorusKnotGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.TorusKnotGeometry.prototype = Object.create( THREE.Geometry.prototype );

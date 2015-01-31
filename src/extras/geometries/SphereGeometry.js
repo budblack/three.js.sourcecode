@@ -19,7 +19,7 @@
 ///<param name ="thetaLength" type="float">球体经线弧长</param>
 THREE.SphereGeometry = function ( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象SphereGeometry来使用.
 
 	this.parameters = {
 		radius: radius,	//球体体半径
