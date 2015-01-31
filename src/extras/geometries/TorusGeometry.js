@@ -3,27 +3,40 @@
  * @author mrdoob / http://mrdoob.com/
  * based on http://code.google.com/p/away3d/source/browse/trunk/fp10/Away3DLite/src/away3dlite/primitives/Torus.as?r=2888
  */
-
+/*
+///TorusGeometry用来在三维空间内创建一个圆环体对象.
+///
+///	用法: var geometry = new THREE.SphereGeometry(5,32,32);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var sphere = new THREE.Mesh(geometry,material);
+/// 	  scene.add(sphere);
+*/
+///<summary>TorusGeometry</summary>
+///<param name ="radius" type="float">圆环体半径</param>
+///<param name ="tube" type="float">圆环弯管半径</param>
+///<param name ="radialSegments" type="int">圆环体圆周上细分线段数</param>
+///<param name ="tubularSegments" type="int">圆环弯管圆周上的细分线段数</param>
+///<param name ="arc" type="float">圆环体圆周弧长,默认初始化为Math.PI * 2</param>
 THREE.TorusGeometry = function ( radius, tube, radialSegments, tubularSegments, arc ) {
 
 	THREE.Geometry.call( this );
 
 	this.parameters = {
-		radius: radius,
-		tube: tube,
-		radialSegments: radialSegments,
-		tubularSegments: tubularSegments,
-		arc: arc
+		radius: radius,	//圆环体半径
+		tube: tube,	 	//圆环弯管半径
+		radialSegments: radialSegments, 	//圆环体圆周上细分线段数
+		tubularSegments: tubularSegments,	//圆环弯管圆周上的细分线段数
+		arc: arc 	//圆环体圆周弧长,默认初始化为Math.PI * 2
 	};
 
-	radius = radius || 100;
-	tube = tube || 40;
-	radialSegments = radialSegments || 8;
-	tubularSegments = tubularSegments || 6;
-	arc = arc || Math.PI * 2;
+	radius = radius || 100;	//圆环体半径,如果参数未设置,初始化为100.
+	tube = tube || 40;	 	//圆环弯管半径,如果参数未设置,初始化为40.
+	radialSegments = radialSegments || 8; 	//圆环体圆周上细分线段数,如果参数未设置,初始化为8.
+	tubularSegments = tubularSegments || 6;	//圆环弯管圆周上的细分线段数,如果参数未设置,初始化为6.
+	arc = arc || Math.PI * 2;		//圆环体圆周弧长,默认初始化为Math.PI * 2
 
 	var center = new THREE.Vector3(), uvs = [], normals = [];
-
+	//计算顶点数据,压入vertices数组.
 	for ( var j = 0; j <= radialSegments; j ++ ) {
 
 		for ( var i = 0; i <= tubularSegments; i ++ ) {
@@ -47,7 +60,7 @@ THREE.TorusGeometry = function ( radius, tube, radialSegments, tubularSegments, 
 		}
 
 	}
-
+	//计算三角面,以及贴图uv.
 	for ( var j = 1; j <= radialSegments; j ++ ) {
 
 		for ( var i = 1; i <= tubularSegments; i ++ ) {
@@ -69,8 +82,10 @@ THREE.TorusGeometry = function ( radius, tube, radialSegments, tubularSegments, 
 
 	}
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算面的法线
 
 };
-
+/*************************************************
+****下面是TorusGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.TorusGeometry.prototype = Object.create( THREE.Geometry.prototype );
