@@ -7,7 +7,7 @@
  *
  */
 /*
-///SphereGeometry用来在三维空间内通过参数func的定义,生成一个集合体.
+///ParametricGeometry用来在三维空间内通过参数func的定义,生成一个几何体.有了这个对象,各种你想要的集合体,发挥你的数学天赋吧.
 ///
 ///	用法: 
 /// 	  var func = function(u,v){
