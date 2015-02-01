@@ -33,7 +33,7 @@ THREE.RingGeometry = function ( innerRadius, outerRadius, thetaSegments, phiSegm
 	//计算顶点数据,压入vertices数组.
 	for ( i = 0; i < phiSegments + 1; i ++ ) { // concentric circles inside ring
 
-		for ( o = 0; o < thetaSegments + 1; o ++ ) { // number of segments per circle
+		for ( o = 0; o < thetaSegments + 1; o ++ ) { // number of segments per circle 圆周上的分段数
 
 			var vertex = new THREE.Vector3();
 			var segment = thetaStart + o / thetaSegments * thetaLength;

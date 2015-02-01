@@ -75,7 +75,7 @@ src
 ¦  ¦      IcosahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      LatheGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      OctahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
-¦  ¦      ParametricGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      ParametricGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      PlaneGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      PolyhedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      RingGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%

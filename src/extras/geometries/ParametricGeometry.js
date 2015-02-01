@@ -6,10 +6,28 @@
  * new THREE.ParametricGeometry( parametricFunction, uSegments, ySegements );
  *
  */
-
+/*
+///SphereGeometry用来在三维空间内通过参数func的定义,生成一个集合体.
+///
+///	用法: 
+/// 	  var func = function(u,v){
+///				var point = new THREE.Vector3();
+///				point.x = 100 + Math.cos(u);
+///				point.y = 100 + Math.sin(v);
+///				return point;
+///		  };
+///		  var geometry = new THREE.ParametricGeometry(func,8,8);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var param = new THREE.Mesh(geometry,material);
+/// 	  scene.add(param);
+*/
+///<summary>ParametricGeometry</summary>
+///<param name ="func" type="funciton">功能函数,必须接受参数u,v,返回Vector3</param>
+///<param name ="slices" type="int">u方向上的细分线段数</param>
+///<param name ="stacks" type="int">v方向上的细分线段数</param>
 THREE.ParametricGeometry = function ( func, slices, stacks ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象ParametricGeometry来使用.
 
 	var verts = this.vertices;
 	var faces = this.faces;
@@ -20,7 +38,7 @@ THREE.ParametricGeometry = function ( func, slices, stacks ) {
 
 	var stackCount = stacks + 1;
 	var sliceCount = slices + 1;
-
+	//计算顶点数据,压入vertices数组.
 	for ( i = 0; i <= stacks; i ++ ) {
 
 		v = i / stacks;
@@ -37,7 +55,7 @@ THREE.ParametricGeometry = function ( func, slices, stacks ) {
 
 	var a, b, c, d;
 	var uva, uvb, uvc, uvd;
-
+	//计算三角面,以及贴图uv.
 	for ( i = 0; i < stacks; i ++ ) {
 
 		for ( j = 0; j < slices; j ++ ) {
@@ -68,9 +86,11 @@ THREE.ParametricGeometry = function ( func, slices, stacks ) {
 	// var diff = this.mergeVertices();
 	// console.log('removed ', diff, ' vertices by merging');
 
-	this.computeFaceNormals();
-	this.computeVertexNormals();
+	this.computeFaceNormals();	//计算面的法线
+	this.computeVertexNormals();	//计算顶点法线
 
 };
-
+/*************************************************
+****下面是ParametricGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.ParametricGeometry.prototype = Object.create( THREE.Geometry.prototype );
