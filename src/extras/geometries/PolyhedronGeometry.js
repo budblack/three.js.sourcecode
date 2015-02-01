@@ -3,16 +3,31 @@
  * @author timothypratley / https://github.com/timothypratley
  * @author WestLangley / http://github.com/WestLangley
 */
-
+/*
+///PolyhedronGeometry用来在三维空间内创建一个多面体对象,二十面体,八面体,四面体都会调用当前对象.
+///
+///	用法: 
+///		  var vertices = [ 1,  1,  1,   - 1, - 1,  1,   - 1,  1, - 1,    1, - 1, - 1 ];
+///		  var indices = [ 2,  1,  0,    0,  3,  2,    1,  3,  0,    2,  3,  1 ];
+///		  var geometry = new THREE.PolyhedronGeometry(vertices,indices,70);	
+/// 	  var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+/// 	  var icos = new THREE.Mesh(geometry,material);
+/// 	  scene.add(icos);
+*/
+///<summary>PolyhedronGeometry</summary>
+///<param name ="vertices" type="float">多面体顶点数组</param>
+///<param name ="indices" type="float">多面体顶点索引顺序</param>
+///<param name ="radius" type="float">多面体半径,默认初始化为1</param>
+///<param name ="detail" type="int">细节因子,默认为0,当超过0将会有更多的顶点,当前的几何体就不会是多面体,当参数detail大于1,将会变成一个球体.</param>
 THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象PolyhedronGeometry来使用.
 
-	radius = radius || 1;
-	detail = detail || 0;
+	radius = radius || 1;	//多面体半径,默认初始化为1
+	detail = detail || 0;	//细节因子,默认为0,当超过0将会有更多的顶点,当前的几何体就不会是多面体,当参数detail大于1,将会变成一个球体.
 
 	var that = this;
-
+	//计算顶点数据,压入vertices数组.
 	for ( var i = 0, l = vertices.length; i < l; i += 3 ) {
 
 		prepare( new THREE.Vector3( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] ) );
@@ -22,7 +37,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 	var midpoints = [], p = this.vertices;
 
 	var faces = [];
-
+	//计算三角面.
 	for ( var i = 0, j = 0, l = indices.length; i < l; i += 3, j ++ ) {
 
 		var v1 = p[ indices[ i     ] ];
@@ -222,5 +237,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
 
 };
-
+/*************************************************
+****下面是PolyhedronGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.PolyhedronGeometry.prototype = Object.create( THREE.Geometry.prototype );
