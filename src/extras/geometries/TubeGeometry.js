@@ -10,23 +10,56 @@
  * Uses parallel transport frames as described in
  * http://www.cs.indiana.edu/pub/techreports/TR425.pdf
  */
-
+/*
+///TubeGeometry用来在三维空间内创建一个弯管对象.
+///
+///	用法: 
+///		var CustomSinCurve = THREE.Curve.create(
+///		    function ( scale ) { //custom curve constructor
+///		        this.scale = (scale === undefined) ? 1 : scale;
+///		    },
+///		    
+///		    function ( t ) { //getPoint: t is between 0-1
+///		        var tx = t * 3 - 1.5,
+///		            ty = Math.sin( 2 * Math.PI * t ),
+///		            tz = 0;
+///		        
+///		        return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+///		    }
+///		);
+///
+///		var path = new CustomSinCurve( 10 );
+///
+///		var geometry = new THREE.TubeGeometry(
+///		    path,  //path
+///		    20,    //segments
+///		    2,     //radius
+///		    8,     //radiusSegments
+///		    false  //closed
+///		);
+*/
+///<summary>TubeGeometry</summary>
+///<param name ="path" type="THREE.Path">弯管的路径</param>
+///<param name ="segments" type="int">沿弯管路径上的细分线段数,默认为64</param>
+///<param name ="radius" type="float">弯管的半径,默认为1</param>
+///<param name ="radialSegments" type="int">弯管圆周方向上的细分线段数,默认为8</param>
+///<param name ="closed" type="boolean">是否连接起始点,结束点,true为关闭.,默认为false</param>
 THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed ) {
 
-	THREE.Geometry.call( this );
+	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象TubeGeometry来使用.
 
 	this.parameters = {
-		path: path,
-		segments: segments,
-		radius: radius,
-		radialSegments: radialSegments,
-		closed: closed
+		path: path,	//弯管的路径
+		segments: segments,	//沿弯管路径上的细分线段数,默认为64
+		radius: radius,	//弯管的半径,默认为1
+		radialSegments: radialSegments,	//弯管圆周方向上的细分线段数,默认为8
+		closed: closed 	//是否开口,如果设置为true,弯管两端没有封头,默认为false
 	};
 
-	segments = segments || 64;
-	radius = radius || 1;
-	radialSegments = radialSegments || 8;
-	closed = closed || false;
+	segments = segments || 64;	//沿弯管路径上的细分线段数,默认为64
+	radius = radius || 1;	//弯管的半径,默认为1
+	radialSegments = radialSegments || 8;	//弯管圆周方向上的细分线段数,默认为8
+	closed = closed || false;	//是否连接起始点,结束点,true为关闭.,默认为false
 
 	var grid = [];
 
@@ -49,16 +82,23 @@ THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed )
 		a, b, c, d,
 		uva, uvb, uvc, uvd;
 
-	var frames = new THREE.TubeGeometry.FrenetFrames( path, segments, closed ),
+	var frames = new THREE.TubeGeometry.FrenetFrames( path, segments, closed ),	//调用THREE.TubeGeometry.FrenetFrames()方法,计算弗莱纳框架,得到路径的切线,法线,副法线
 		tangents = frames.tangents,
 		normals = frames.normals,
 		binormals = frames.binormals;
 
 	// proxy internals
+	// 内部代理
 	this.tangents = tangents;
 	this.normals = normals;
 	this.binormals = binormals;
-
+	/*
+	///vert方法将x,y,z三个分量压入圆管的顶点数组.
+	*/
+	///<summary>vert</summary>
+	///<param name ="x" type="float">三维向量的x分量</param>
+	///<param name ="y" type="float">三维向量的y分量</param>
+	///<param name ="z" type="float">三维向量的z分量</param>
 	function vert( x, y, z ) {
 
 		return scope.vertices.push( new THREE.Vector3( x, y, z ) ) - 1;
@@ -66,6 +106,7 @@ THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed )
 	}
 
 	// consruct the grid
+	//构建网格
 
 	for ( i = 0; i < numpoints; i ++ ) {
 
@@ -98,6 +139,7 @@ THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed )
 
 
 	// construct the mesh
+	// 构建曲面
 
 	for ( i = 0; i < segments; i ++ ) {
 
@@ -125,15 +167,24 @@ THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed )
 		}
 	}
 
-	this.computeFaceNormals();
-	this.computeVertexNormals();
+	this.computeFaceNormals();	//计算面的法线
+	this.computeVertexNormals();	//计算顶点的法线
 
 };
-
+/*************************************************
+****下面是TubeGeometry对象的方法属性定义,继承自Geometry对象.
+**************************************************/
 THREE.TubeGeometry.prototype = Object.create( THREE.Geometry.prototype );
 
-
+/*
+///FrenetFrames方法计算弗莱纳框架,得到路径的切线,法线,副法线.
+*/
+///<summary>FrenetFrames</summary>
+///<param name ="path" type="THREE.Path">弯管的路径</param>
+///<param name ="segments" type="int">沿弯管路径上的细分线段数,默认为64</param>
+///<param name ="closed" type="boolean">是否连接起始点,结束点,true为关闭.,默认为false</param>
 // For computing of Frenet frames, exposing the tangents, normals and binormals the spline
+// 计算弗莱纳框架,得到路径的切线,法线,副法线.
 THREE.TubeGeometry.FrenetFrames = function ( path, segments, closed ) {
 
 	var	tangent = new THREE.Vector3(),
@@ -156,12 +207,13 @@ THREE.TubeGeometry.FrenetFrames = function ( path, segments, closed ) {
 		i, u, v;
 
 
-	// expose internals
+	// expose internals 
 	this.tangents = tangents;
 	this.normals = normals;
 	this.binormals = binormals;
 
 	// compute the tangent vectors for each segment on the path
+	// 计算路径上的每条细分线段的切线向量
 
 	for ( i = 0; i < numpoints; i ++ ) {
 
@@ -197,10 +249,13 @@ THREE.TubeGeometry.FrenetFrames = function ( path, segments, closed ) {
 
 	}
 	*/
-
+	/*
+	///initialNormal3方法选择初始化法线向量垂直于第一条切线向量和最小切线方向的xyz分量.
+	*/
 	function initialNormal3() {
 		// select an initial normal vector perpenicular to the first tangent vector,
 		// and in the direction of the smallest tangent xyz component
+		// 选择初始化法线向量垂直于第一条切线向量和最小切线方向的xyz分量
 
 		normals[ 0 ] = new THREE.Vector3();
 		binormals[ 0 ] = new THREE.Vector3();
@@ -231,6 +286,7 @@ THREE.TubeGeometry.FrenetFrames = function ( path, segments, closed ) {
 
 
 	// compute the slowly-varying normal and binormal vectors for each segment on the path
+	// 为路径上的每条线段计算缓慢变换的法线和副法线.
 
 	for ( i = 1; i < numpoints; i ++ ) {
 
@@ -256,6 +312,7 @@ THREE.TubeGeometry.FrenetFrames = function ( path, segments, closed ) {
 
 
 	// if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
+	// 如果曲线路经是闭合的,处理顶点数组的最后一个顶点为第一个顶点.
 
 	if ( closed ) {
 
