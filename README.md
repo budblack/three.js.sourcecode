@@ -74,14 +74,14 @@ src
 ¦  ¦      ExtrudeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      IcosahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      LatheGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
-¦  ¦      OctahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      OctahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      ParametricGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      PlaneGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      PolyhedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  0%
 ¦  ¦      RingGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦  ¦      ShapeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -  0%
+¦  ¦      ShapeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      SphereGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
-¦  ¦      TetrahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --  0%
+¦  ¦      TetrahedronGeometry.js - - - - - - - - - - - - - - - - - - - - - - - --100%
 ¦  ¦      TextGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      TorusGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      TorusKnotGeometry.js - - - - - - - - - - - - - - - - - - - - - - -  - -100%
