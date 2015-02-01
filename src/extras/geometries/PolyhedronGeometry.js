@@ -18,7 +18,7 @@
 ///<param name ="vertices" type="float">多面体顶点数组</param>
 ///<param name ="indices" type="float">多面体顶点索引顺序</param>
 ///<param name ="radius" type="float">多面体半径,默认初始化为1</param>
-///<param name ="detail" type="int">细节因子,默认为0,当超过0将会有更多的顶点,当前的几何体就不会是多面体,当参数detail大于1,将会变成一个球体.</param>
+///<param name ="detail" type="float">细节因子,默认为0,当超过0将会有更多的顶点,当前的几何体就不会是多面体,当参数detail大于1,将会变成一个球体.</param>
 THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
 	THREE.Geometry.call( this );	//调用Geometry对象的call方法,将原本属于Geometry的方法交给当前对象PolyhedronGeometry来使用.
@@ -58,6 +58,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
 
 	// Handle case when face straddles the seam
+	// 处理当面横跨缝合线的特殊情况
 
 	for ( var i = 0, l = this.faceVertexUvs[ 0 ].length; i < l; i ++ ) {
 
@@ -82,6 +83,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
 
 	// Apply radius
+	// 对顶点应用位置,乘以半径值.
 
 	for ( var i = 0, l = this.vertices.length; i < l; i ++ ) {
 
@@ -90,35 +92,47 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 	}
 
 
-	// Merge vertices
+	// Merge vertices 合并顶点
 
-	this.mergeVertices();
+	this.mergeVertices();	//去除多余的顶点
 
-	this.computeFaceNormals();
+	this.computeFaceNormals();	//计算面的法线
 
-	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );	//计算球体边界
 
-
+	/*
+	///prepare是计算顶点位置的具体实现,将传入的向量(参数Vector3)投影到球体的表面
+	*/
+	///<summary>prepare</summary>
+	///<param name ="radius" type="Vector3"></param>
+	///<return type="Vector3">球体体半径</param>
 	// Project vector onto sphere's surface
-
+	// 投影矢量到球体的表面.
 	function prepare( vector ) {
 
 		var vertex = vector.normalize().clone();
 		vertex.index = that.vertices.push( vertex ) - 1;
 
 		// Texture coords are equivalent to map coords, calculate angle and convert to fraction of a circle.
+		// 纹理坐标等于贴图uv坐标,计算角度并转换为圆的一部分.
 
 		var u = azimuth( vector ) / 2 / Math.PI + 0.5;
 		var v = inclination( vector ) / Math.PI + 0.5;
 		vertex.uv = new THREE.Vector2( u, 1 - v );
 
-		return vertex;
+		return vertex;	//返回对应的顶点
 
 	}
 
-
+	/*
+	///make是细分曲面的具体实现,递归计算曲面顶点,转换为细分的三角形
+	*/
+	///<summary>make</summary>
+	///<param name ="v1" type="Vector3">三角形的第一个顶点</param>
+	///<param name ="v2" type="Vector3">三角形的第二个顶点</param>
+	///<param name ="v3" type="Vector3">三角形的第三个顶点</param>
 	// Approximate a curved face with recursively sub-divided triangles.
-
+	//递归计算曲面顶点,转换为细分的三角形.
 	function make( v1, v2, v3 ) {
 
 		var face = new THREE.Face3( v1.index, v2.index, v3.index, [ v1.clone(), v2.clone(), v3.clone() ] );
@@ -136,9 +150,14 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 
 	}
 
-
+	/*
+	///make是细分曲面的具体实现,递归计算曲面顶点,转换为细分的三角形
+	*/
+	///<summary>make</summary>
+	///<param name ="face" type="Face3">三角面</param>
+	///<param name ="detail" type="float">细节因子,默认为0,当超过0将会有更多的顶点,当前的几何体就不会是多面体,当参数detail大于1,将会变成一个球体</param>
 	// Analytically subdivide a face to the required detail level.
-
+	//按照要求的细节因子,细分三角面.
 	function subdivide( face, detail ) {
 
 		var cols = Math.pow(2, detail);
@@ -149,6 +168,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 		var v = [];
 
 		// Construct all of the vertices for this subdivision.
+		// 构建所有的细分三角形顶点.
 
 		for ( var i = 0 ; i <= cols; i ++ ) {
 
@@ -175,6 +195,7 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 		}
 
 		// Construct all of the faces.
+		// 构建所有的三角面
 
 		for ( var i = 0; i < cols ; i ++ ) {
 
@@ -207,17 +228,26 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 	}
 
 
+	/*
+	///azimuth方法获得一个点当从上面看时,绕y轴的角度.
+	*/
+	///<summary>azimuth</summary>
+	///<param name ="vector" type="Vector3">三维向量</param>
 	// Angle around the Y axis, counter-clockwise when looking from above.
-
+	// 当从上面看时,绕y轴的角度.
 	function azimuth( vector ) {
 
 		return Math.atan2( vector.z, - vector.x );
 
 	}
 
-
+	/*
+	///inclination方法获得一个点在xz平面上的角度.
+	*/
+	///<summary>inclination</summary>
+	///<param name ="vector" type="Vector3">三维向量</param>
 	// Angle above the XZ plane.
-
+	// 获得一个点在xz平面上的角度.
 	function inclination( vector ) {
 
 		return Math.atan2( - vector.y, Math.sqrt( ( vector.x * vector.x ) + ( vector.z * vector.z ) ) );
@@ -225,8 +255,15 @@ THREE.PolyhedronGeometry = function ( vertices, indices, radius, detail ) {
 	}
 
 
+	/*
+	///inclination方法获得一个点在xz平面上的角度.
+	*/
+	///<summary>inclination</summary>
+	///<param name ="uv" type="Vector2">二维向量</param>
+	///<param name ="vector" type="Vector3">三维向量</param>
+	///<param name ="azimuth" type="Vector3">一个点当从上面看时,绕y轴的角度</param>
 	// Texture fixing helper. Spheres have some odd behaviours.
-
+	// 纹理替换辅助器,因为多面体表面和球体相比有一些奇怪的棱角,这里为了让纹理更好的适配多面体表面.
 	function correctUV( uv, vector, azimuth ) {
 
 		if ( ( azimuth < 0 ) && ( uv.x === 1 ) ) uv = new THREE.Vector2( uv.x - 1, uv.y );
