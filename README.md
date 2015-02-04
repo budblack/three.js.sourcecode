@@ -85,7 +85,7 @@ src
 ¦  ¦      TextGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      TorusGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - -  - -100%
 ¦  ¦      TorusKnotGeometry.js - - - - - - - - - - - - - - - - - - - - - - -  - -100%
-¦  ¦      TubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -  0%
+¦  ¦      TubeGeometry.js - - - - - - - - - - - - - - - - - - - - - - - - - - - -100%
 ¦  ¦      
 ¦  --helpers
 ¦  ¦      ArrowHelper.js - - - - - - - - - - - - - - - - - - - - - - - - - - - --  0%
