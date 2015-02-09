@@ -7,7 +7,7 @@ three.js 源码注释
 
 ### 注释说明 ###
 一开始打算直接在three.js文件中注释,但是由于github对超过1mb的文件无法直接在浏览器中查看的限制,而且为了方便以后的维护和管理,定改变注释的方式.以后将按照官方的目录结构,按单个文件方式进行注释.之前注释的代码在three.js文件中.
-
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/omni360/three.js.sourcecode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 ### 转载须知 ###
 如果转载文章,请添加转载须知.txt文件中代码到网页文章的首尾,谢谢合作.
 
