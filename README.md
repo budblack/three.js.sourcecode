@@ -1,6 +1,8 @@
 three.js 源码注释
 =========
 
+[![Join the chat at https://gitter.im/omni360/three.js.sourcecode](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/omni360/three.js.sourcecode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 #### 为什么要做源码注释 ####
 
 首先,自己对计算机图形学,webgl非常感兴趣,希望有时间可以学学.通过注释Three.js源码确实对学习计算机图形学,有非常大的帮助.
