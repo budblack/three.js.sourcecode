@@ -115,6 +115,8 @@ THREE.Plane.prototype = {
 	/*
 	///copy方法用来复制二维平面的法线向量normal,原点到平面的距离constant值.返回新的二维平面
 	///TODO: copy方法和clone方法有什么不同?
+	///clone的东西返回的是一个新的实例，但是copy的是一个实例的引用，会互相影响
+	
 	*/
 	///<summary>copy</summary>
 	///<param name ="Plane" type="Plane">二维平面</param>
